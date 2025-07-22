@@ -28,7 +28,12 @@ function buildFilterWhereClause(filters) {
   }
   if (filters.lastDays) {
     const days = parseInt(filters.lastDays);
-    conditions.push(`l.LogDate >= DATEADD(day, -${days}, GETDATE())`);
+    if (days === 0) {
+      // Today only
+      conditions.push(`CAST(l.LogDate AS DATE) = CAST(GETDATE() AS DATE)`);
+    } else {
+      conditions.push(`l.LogDate >= DATEADD(day, -${days}, GETDATE())`);
+    }
   }
   if (filters.dateFrom && filters.dateTo) {
     conditions.push(`l.LogDate >= '${filters.dateFrom}' AND l.LogDate <= '${filters.dateTo}'`);
@@ -261,7 +266,11 @@ router.get('/customers-by-city', async (req, res) => {
     }
     if (filters.lastDays) {
       const days = parseInt(filters.lastDays);
-      logFilterCondition += ` AND l.LogDate >= DATEADD(day, -${days}, GETDATE())`;
+      if (days === 0) {
+        logFilterCondition += ` AND CAST(l.LogDate AS DATE) = CAST(GETDATE() AS DATE)`;
+      } else {
+        logFilterCondition += ` AND l.LogDate >= DATEADD(day, -${days}, GETDATE())`;
+      }
     }
     if (filters.volumeLevel) {
       if (filters.volumeLevel === 'low') {
@@ -314,7 +323,11 @@ router.get('/customer-activity', async (req, res) => {
     // Apply time-based filters for activity calculation
     if (filters.lastDays) {
       const days = parseInt(filters.lastDays);
-      activityTimeCondition = `l.LogDate >= DATEADD(day, -${days}, GETDATE())`;
+      if (days === 0) {
+        activityTimeCondition = `CAST(l.LogDate AS DATE) = CAST(GETDATE() AS DATE)`;
+      } else {
+        activityTimeCondition = `l.LogDate >= DATEADD(day, -${days}, GETDATE())`;
+      }
     } else if (filters.month && filters.year) {
       activityTimeCondition = `MONTH(l.LogDate) = ${parseInt(filters.month)} AND YEAR(l.LogDate) = ${parseInt(filters.year)}`;
     } else if (filters.quarter && filters.year) {
@@ -376,7 +389,11 @@ router.get('/scanning-efficiency', async (req, res) => {
       whereCondition += ` AND MONTH(l.LogDate) BETWEEN ${startMonth} AND ${endMonth} AND YEAR(l.LogDate) = ${parseInt(filters.year)}`;
     } else if (filters.lastDays) {
       const days = parseInt(filters.lastDays);
-      whereCondition += ` AND l.LogDate >= DATEADD(day, -${days}, GETDATE())`;
+      if (days === 0) {
+        whereCondition += ` AND CAST(l.LogDate AS DATE) = CAST(GETDATE() AS DATE)`;
+      } else {
+        whereCondition += ` AND l.LogDate >= DATEADD(day, -${days}, GETDATE())`;
+      }
     } else {
       whereCondition += ` AND MONTH(l.LogDate) = MONTH(GETDATE()) AND YEAR(l.LogDate) = YEAR(GETDATE())`;
     }

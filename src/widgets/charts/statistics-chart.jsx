@@ -10,7 +10,7 @@ import Chart from "react-apexcharts";
 
 export function StatisticsChart({ color, chart, title, description, footer }) {
   return (
-    <Card className="border border-blue-gray-100 shadow-sm h-full flex flex-col">
+    <Card className="shadow-lg shadow-gray-500/40 border-0 bg-white h-full flex flex-col drop-shadow-lg">
       <CardHeader variant="filled" color="transparent" floated={false} shadow={false} className="bg-transparent flex-1">
         <Chart {...chart} />
       </CardHeader>
@@ -23,7 +23,7 @@ export function StatisticsChart({ color, chart, title, description, footer }) {
         </Typography>
       </CardBody>
       {footer && (
-        <CardFooter className="border-t border-blue-gray-50 px-6 py-5">
+        <CardFooter className="px-6 py-5 bg-gray-50/30">
           {footer}
         </CardFooter>
       )}

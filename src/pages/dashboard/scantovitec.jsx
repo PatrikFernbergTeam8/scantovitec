@@ -228,11 +228,11 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
   }
 
   return (
-    <div className="h-[calc(100vh-120px)] w-full overflow-hidden flex flex-col">
-      {/* Statistics Cards - Compact responsive grid */}
-      <div className="flex-shrink-0 grid gap-1 sm:gap-2 md:gap-3 
+    <div className="h-[calc(100vh-80px)] w-full overflow-visible flex flex-col">
+      {/* Statistics Cards - Compact responsive grid with shadow space */}
+      <div className="flex-shrink-0 grid gap-2 sm:gap-3 md:gap-4 
                       grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4
-                      p-2 sm:p-3 md:p-4">
+                      px-2 sm:px-3 md:px-4 pt-4 sm:pt-5 md:pt-6 pb-1 sm:pb-1.5 md:pb-2">
         {statisticsData.map((item) => (
           <StatisticsCard
             key={item.title}
@@ -252,13 +252,13 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
         ))}
       </div>
       
-      {/* Charts Grid - Takes remaining space with minimal spacing */}
-      <div className="flex-1 p-1 sm:p-2 md:p-3 overflow-hidden">
-        <div className="h-full grid gap-1 sm:gap-2 md:gap-3 
+      {/* Charts Grid - Takes remaining space with adequate spacing for shadows */}
+      <div className="flex-1 px-2 sm:px-3 md:px-4 pt-1 sm:pt-1.5 md:pt-2 pb-2 sm:pb-3 md:pb-4 overflow-visible">
+        <div className="h-full grid gap-2 sm:gap-3 md:gap-4 
                         grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4" 
                         style={{gridTemplateRows: '1fr 1fr'}}>
           {chartsData.map((item, index) => (
-            <div key={index} className={`h-full min-h-0 overflow-hidden ${
+            <div key={index} className={`h-full min-h-0 ${
               item.title.includes('Kundaktivitet') 
                 ? 'md:col-span-1 md:row-span-1' 
                 : item.title.includes('Batch-Scanning') 
@@ -268,7 +268,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
                     : 'md:col-span-2 md:row-span-1'
             }`}>
               {item.type === 'table' ? (
-                <Card className="border border-blue-gray-100 shadow-sm h-full flex flex-col">
+                <Card className="shadow-lg shadow-gray-500/40 border-0 bg-white h-full flex flex-col drop-shadow-lg">
                   <CardHeader variant="gradient" color="white" floated={false} shadow={false} className="p-4">
                     <Typography variant="h6" color="blue-gray">
                       {item.title}
@@ -279,7 +279,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
                     <div className="overflow-x-auto" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
                       <table className="w-full text-left table-auto">
                         <thead>
-                          <tr className="border-b border-blue-gray-100">
+                          <tr className="bg-gray-50/50">
                             <th className="p-2 text-xs font-medium text-blue-gray-600">Ort</th>
                             <th className="p-2 text-xs font-medium text-blue-gray-600">Skannade Dokument</th>
                             <th className="p-2 text-xs font-medium text-blue-gray-600">Sidor</th>
@@ -288,7 +288,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
                         </thead>
                         <tbody>
                           {item.data.map((customer, i) => (
-                            <tr key={i} className="border-b border-blue-gray-50">
+                            <tr key={i} className="hover:bg-gray-50/30 transition-colors">
                               <td className="p-2 text-xs text-blue-gray-900 font-medium">{customer.ort}</td>
                               <td className="p-2 text-xs text-blue-gray-600">{customer.skannadeDokument}</td>
                               <td className="p-2 text-xs text-blue-gray-600">{customer.totalSidor}</td>
