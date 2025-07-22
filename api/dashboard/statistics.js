@@ -58,7 +58,18 @@ module.exports = async (req, res) => {
     const filters = req.query;
     
     const hasTimeFilters = filters.month || filters.year || filters.quarter || filters.week || filters.lastDays || (filters.dateFrom && filters.dateTo);
-    const filterCondition = hasTimeFilters ? buildFilterWhereClause(filters) : "k.Kedja = 'Länsfast'";
+    
+    // If no time filters, default to last 30 days for activity data
+    let filterCondition;
+    let activityFilterCondition;
+    
+    if (!hasTimeFilters) {
+      filterCondition = "k.Kedja = 'Länsfast'";
+      activityFilterCondition = "k.Kedja = 'Länsfast' AND l.LogDate >= DATEADD(day, -30, GETDATE())";
+    } else {
+      filterCondition = buildFilterWhereClause(filters);
+      activityFilterCondition = filterCondition;
+    }
     
     const queries = await Promise.all([
       pool.request().query('SELECT COUNT(*) as totalKunder FROM Kunder WHERE Kedja = \\'Länsfast\\''),
@@ -66,21 +77,45 @@ module.exports = async (req, res) => {
         SELECT COUNT(DISTINCT k.CrmID) as activeKunder 
         FROM Kunder k 
         INNER JOIN Logs l ON k.CrmID = l.CrmID 
-        WHERE ${filterCondition}
+        WHERE ${activityFilterCondition}
       `),
       pool.request().query(`
         SELECT COALESCE(SUM(l.AntalSidor), 0) as totalSidor 
         FROM Logs l 
         INNER JOIN Kunder k ON l.CrmID = k.CrmID
-        WHERE ${filterCondition}
+        WHERE ${activityFilterCondition}
       `),
       pool.request().query(`
         SELECT COUNT(*) as totalScans 
         FROM Logs l 
         INNER JOIN Kunder k ON l.CrmID = k.CrmID
-        WHERE ${filterCondition}
+        WHERE ${activityFilterCondition}
       `)
     ]);
+
+    // Determine footer text based on active filters
+    let footerText = "Senaste 30 dagarna"; // Default
+    
+    if (filters.lastDays) {
+      const days = parseInt(filters.lastDays);
+      if (days === 0) {
+        footerText = "Idag";
+      } else {
+        footerText = `Senaste ${days} dagarna`;
+      }
+    } else if (filters.month && filters.year) {
+      const months = ['', 'Januari', 'Februari', 'Mars', 'April', 'Maj', 'Juni', 'Juli', 'Augusti', 'September', 'Oktober', 'November', 'December'];
+      footerText = `${months[parseInt(filters.month)]} ${filters.year}`;
+    } else if (filters.quarter && filters.year) {
+      footerText = `Q${filters.quarter} ${filters.year}`;
+    } else if (filters.quarter) {
+      footerText = `Q${filters.quarter}`;
+    } else if (filters.year) {
+      footerText = `${filters.year}`;
+    } else if (filters.month) {
+      const months = ['', 'Januari', 'Februari', 'Mars', 'April', 'Maj', 'Juni', 'Juli', 'Augusti', 'September', 'Oktober', 'November', 'December'];
+      footerText = `${months[parseInt(filters.month)]}`;
+    }
 
     const statistics = [
       {
@@ -97,33 +132,33 @@ module.exports = async (req, res) => {
       {
         color: "gray", 
         icon: "UserGroupIcon",
-        title: "Aktiva Kunder",
+        title: "Aktiva Kontor",
         value: queries[1].recordset[0].activeKunder || 0,
         footer: {
           color: "text-green-500",
-          value: "Senaste 30 dagarna",
+          value: footerText,
           label: ""
         }
       },
       {
         color: "gray",
         icon: "DocumentTextIcon", 
-        title: "Sidor Scannde",
+        title: "Totalt Skannade Sidor",
         value: `${queries[2].recordset[0].totalSidor || 0}`,
         footer: {
           color: "text-green-500",
-          value: "Denna månad",
+          value: footerText,
           label: ""
         }
       },
       {
         color: "gray",
         icon: "ChartBarIcon",
-        title: "Antal Scanningar",
+        title: "Totalt Skannade Dokument",
         value: queries[3].recordset[0].totalScans || 0,
         footer: {
           color: "text-green-500",
-          value: "Denna månad",
+          value: footerText,
           label: ""
         }
       }

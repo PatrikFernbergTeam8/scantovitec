@@ -70,7 +70,34 @@ module.exports = async (req, res) => {
       ORDER BY skannadeDokument DESC
     `);
 
-    res.json(result.recordset);
+    // Determine title text based on active filters
+    let titleText = "Mest Aktiva Kontor Senaste 30 Dagarna"; // Default
+    
+    if (filters.lastDays) {
+      const days = parseInt(filters.lastDays);
+      if (days === 0) {
+        titleText = "Mest Aktiva Kontor Idag";
+      } else {
+        titleText = `Mest Aktiva Kontor Senaste ${days} Dagarna`;
+      }
+    } else if (filters.month && filters.year) {
+      const months = ['', 'Januari', 'Februari', 'Mars', 'April', 'Maj', 'Juni', 'Juli', 'Augusti', 'September', 'Oktober', 'November', 'December'];
+      titleText = `Mest Aktiva Kontor ${months[parseInt(filters.month)]} ${filters.year}`;
+    } else if (filters.quarter && filters.year) {
+      titleText = `Mest Aktiva Kontor Q${filters.quarter} ${filters.year}`;
+    } else if (filters.quarter) {
+      titleText = `Mest Aktiva Kontor Q${filters.quarter}`;
+    } else if (filters.year) {
+      titleText = `Mest Aktiva Kontor ${filters.year}`;
+    } else if (filters.month) {
+      const months = ['', 'Januari', 'Februari', 'Mars', 'April', 'Maj', 'Juni', 'Juli', 'Augusti', 'September', 'Oktober', 'November', 'December'];
+      titleText = `Mest Aktiva Kontor ${months[parseInt(filters.month)]}`;
+    }
+
+    res.json({
+      title: titleText,
+      data: result.recordset
+    });
   } catch (error) {
     console.error('Error fetching customers by city:', error);
     res.status(500).json({ error: 'Failed to fetch customers by city' });

@@ -108,10 +108,10 @@ export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetF
 
   // Helper function for modern filter button styling
   const getFilterButtonClass = (isActive) => {
-    return `flex items-center gap-2 normal-case min-w-fit flex-shrink-0 px-3 py-2 rounded-xl transition-all duration-200 ${
+    return `flex items-center gap-2 normal-case min-w-fit flex-shrink-0 px-3 py-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-0 focus:shadow-none ${
       isActive 
-        ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-2xl shadow-blue-500/50' 
-        : 'bg-white text-gray-700 shadow-xl shadow-gray-400/30 hover:shadow-2xl hover:shadow-gray-500/40'
+        ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border border-blue-200/50' 
+        : 'bg-white text-gray-700 border border-gray-200 hover:border-gray-300'
     }`;
   };
   
@@ -369,7 +369,7 @@ export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetF
                   <Button
                     variant="text"
                     onClick={onResetFilters}
-                    className="flex items-center gap-2 flex-shrink-0 px-3 py-2 rounded-xl transition-all duration-200 bg-red-50 text-red-600 shadow-xl shadow-red-400/30 hover:shadow-2xl hover:shadow-red-500/40"
+                    className="flex items-center gap-2 flex-shrink-0 px-3 py-2 rounded-xl transition-all duration-200 bg-gray-100 text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-200 focus:outline-none focus:ring-0 focus:shadow-none"
                   >
                     <XMarkIcon className="h-4 w-4" />
                     <span className="font-medium text-sm">Rensa</span>

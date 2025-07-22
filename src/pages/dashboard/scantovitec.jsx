@@ -87,10 +87,10 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
           },
           {
             color: "white",
-            title: "Mest Aktiva Kontor Denna Månad",
+            title: customersByCity.title || "Mest Aktiva Kontor Senaste 30 Dagarna",
             description: "Översikt av kunder per stad",
             type: "table",
-            data: customersByCity
+            data: customersByCity.data || customersByCity
           },
           {
             color: "white",
