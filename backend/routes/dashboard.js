@@ -2,34 +2,111 @@ const express = require('express');
 const router = express.Router();
 const { getPool, sql } = require('../config/database');
 
+// Helper function to build WHERE clause based on filters
+function buildFilterWhereClause(filters) {
+  let conditions = ["k.Kedja = 'Länsfast'"];
+  
+  // Time-based filters
+  if (filters.month) {
+    conditions.push(`MONTH(l.LogDate) = ${parseInt(filters.month)}`);
+  }
+  if (filters.year) {
+    conditions.push(`YEAR(l.LogDate) = ${parseInt(filters.year)}`);
+  }
+  if (filters.quarter) {
+    const quarter = parseInt(filters.quarter);
+    const startMonth = (quarter - 1) * 3 + 1;
+    const endMonth = quarter * 3;
+    conditions.push(`MONTH(l.LogDate) BETWEEN ${startMonth} AND ${endMonth}`);
+  }
+  if (filters.week) {
+    if (filters.week === 'current') {
+      conditions.push(`DATEPART(week, l.LogDate) = DATEPART(week, GETDATE()) AND YEAR(l.LogDate) = YEAR(GETDATE())`);
+    } else if (filters.week === 'last') {
+      conditions.push(`DATEPART(week, l.LogDate) = DATEPART(week, DATEADD(week, -1, GETDATE())) AND YEAR(l.LogDate) = YEAR(GETDATE())`);
+    }
+  }
+  if (filters.lastDays) {
+    const days = parseInt(filters.lastDays);
+    conditions.push(`l.LogDate >= DATEADD(day, -${days}, GETDATE())`);
+  }
+  if (filters.dateFrom && filters.dateTo) {
+    conditions.push(`l.LogDate >= '${filters.dateFrom}' AND l.LogDate <= '${filters.dateTo}'`);
+  }
+  
+  // Geographic filters
+  if (filters.city) {
+    conditions.push(`k.Ort = '${filters.city.replace(/'/g, "''")}'`);
+  }
+  
+  // Volume filters
+  if (filters.volumeLevel) {
+    if (filters.volumeLevel === 'low') {
+      conditions.push(`l.AntalSidor BETWEEN 1 AND 10`);
+    } else if (filters.volumeLevel === 'medium') {
+      conditions.push(`l.AntalSidor BETWEEN 11 AND 50`);
+    } else if (filters.volumeLevel === 'high') {
+      conditions.push(`l.AntalSidor > 50`);
+    }
+  }
+  
+  return conditions.join(' AND ');
+}
+
+// Helper function to build customer activity filter
+function buildCustomerActivityFilter(filters) {
+  let baseCondition = "k.Kedja = 'Länsfast'";
+  
+  if (filters.customerActivity) {
+    if (filters.customerActivity === 'very_active') {
+      // Daily scanners (scanned in last 7 days)
+      return `${baseCondition} AND EXISTS (SELECT 1 FROM Logs l WHERE l.CrmID = k.CrmID AND l.LogDate >= DATEADD(day, -7, GETDATE()))`;
+    } else if (filters.customerActivity === 'active') {
+      // Weekly scanners (scanned in last 30 days but not daily)
+      return `${baseCondition} AND EXISTS (SELECT 1 FROM Logs l WHERE l.CrmID = k.CrmID AND l.LogDate >= DATEADD(day, -30, GETDATE()) AND l.LogDate < DATEADD(day, -7, GETDATE()))`;
+    } else if (filters.customerActivity === 'inactive') {
+      // No scans in last 30 days
+      return `${baseCondition} AND NOT EXISTS (SELECT 1 FROM Logs l WHERE l.CrmID = k.CrmID AND l.LogDate >= DATEADD(day, -30, GETDATE()))`;
+    }
+  }
+  
+  return baseCondition;
+}
+
 // Get statistics cards data
 router.get('/statistics', async (req, res) => {
   try {
     const pool = await getPool();
+    const filters = req.query;
+    
+    // Build filter conditions for data queries
+    const hasTimeFilters = filters.month || filters.year || filters.quarter || filters.week || filters.lastDays || (filters.dateFrom && filters.dateTo);
+    const filterCondition = hasTimeFilters ? buildFilterWhereClause(filters) : "k.Kedja = 'Länsfast'";
+    const customerActivityCondition = buildCustomerActivityFilter(filters);
     
     const queries = await Promise.all([
-      // Total customers (Länsfast only)
+      // Total customers (Länsfast only) - no time filtering for total count
       pool.request().query('SELECT COUNT(*) as totalKunder FROM Kunder WHERE Kedja = \'Länsfast\''),
-      // Active customers (customers with logs in last 30 days, Länsfast only)
+      // Active customers (customers with logs based on filters)
       pool.request().query(`
         SELECT COUNT(DISTINCT k.CrmID) as activeKunder 
         FROM Kunder k 
         INNER JOIN Logs l ON k.CrmID = l.CrmID 
-        WHERE k.Kedja = 'Länsfast' AND l.LogDate >= DATEADD(day, -30, GETDATE())
+        WHERE ${filterCondition}
       `),
-      // Total pages scanned this month (Länsfast only)
+      // Total pages scanned (filtered)
       pool.request().query(`
         SELECT COALESCE(SUM(l.AntalSidor), 0) as totalSidor 
         FROM Logs l 
         INNER JOIN Kunder k ON l.CrmID = k.CrmID
-        WHERE k.Kedja = 'Länsfast' AND MONTH(l.LogDate) = MONTH(GETDATE()) AND YEAR(l.LogDate) = YEAR(GETDATE())
+        WHERE ${filterCondition}
       `),
-      // Total scans this month (Länsfast only)
+      // Total scans (filtered)
       pool.request().query(`
         SELECT COUNT(*) as totalScans 
         FROM Logs l 
         INNER JOIN Kunder k ON l.CrmID = k.CrmID
-        WHERE k.Kedja = 'Länsfast' AND MONTH(l.LogDate) = MONTH(GETDATE()) AND YEAR(l.LogDate) = YEAR(GETDATE())
+        WHERE ${filterCondition}
       `)
     ]);
 
@@ -91,6 +168,31 @@ router.get('/statistics', async (req, res) => {
 router.get('/scanning-activity', async (req, res) => {
   try {
     const pool = await getPool();
+    const filters = req.query;
+    
+    // For chart data, we want to show trends, so use modified filter logic
+    let whereCondition = "k.Kedja = 'Länsfast'";
+    
+    // Apply filters but maintain chart grouping logic
+    if (filters.year) {
+      whereCondition += ` AND YEAR(l.LogDate) = ${parseInt(filters.year)}`;
+    } else {
+      whereCondition += ` AND YEAR(l.LogDate) = YEAR(GETDATE())`;
+    }
+    
+    if (filters.city) {
+      whereCondition += ` AND k.Ort = '${filters.city.replace(/'/g, "''")}'`;
+    }
+    
+    if (filters.volumeLevel) {
+      if (filters.volumeLevel === 'low') {
+        whereCondition += ` AND l.AntalSidor BETWEEN 1 AND 10`;
+      } else if (filters.volumeLevel === 'medium') {
+        whereCondition += ` AND l.AntalSidor BETWEEN 11 AND 50`;
+      } else if (filters.volumeLevel === 'high') {
+        whereCondition += ` AND l.AntalSidor > 50`;
+      }
+    }
     
     const result = await pool.request().query(`
       SELECT 
@@ -111,7 +213,7 @@ router.get('/scanning-activity', async (req, res) => {
         COALESCE(SUM(l.AntalSidor), 0) as totalPages
       FROM Logs l 
       INNER JOIN Kunder k ON l.CrmID = k.CrmID
-      WHERE k.Kedja = 'Länsfast' AND YEAR(l.LogDate) = YEAR(GETDATE())
+      WHERE ${whereCondition}
       GROUP BY MONTH(l.LogDate)
       ORDER BY MONTH(l.LogDate)
     `);
@@ -138,12 +240,49 @@ router.get('/scanning-activity', async (req, res) => {
 router.get('/customers-by-city', async (req, res) => {
   try {
     const pool = await getPool();
+    const filters = req.query;
+    
+    // Build WHERE condition for filtering
+    let whereCondition = "k.Kedja = 'Länsfast' AND k.Ort IS NOT NULL AND k.Ort != ''";
+    let logFilterCondition = "1=1"; // Base condition for log filtering
+    
+    // Apply time-based filters to logs
+    if (filters.month) {
+      logFilterCondition += ` AND MONTH(l.LogDate) = ${parseInt(filters.month)}`;
+    }
+    if (filters.year) {
+      logFilterCondition += ` AND YEAR(l.LogDate) = ${parseInt(filters.year)}`;
+    }
+    if (filters.quarter) {
+      const quarter = parseInt(filters.quarter);
+      const startMonth = (quarter - 1) * 3 + 1;
+      const endMonth = quarter * 3;
+      logFilterCondition += ` AND MONTH(l.LogDate) BETWEEN ${startMonth} AND ${endMonth}`;
+    }
+    if (filters.lastDays) {
+      const days = parseInt(filters.lastDays);
+      logFilterCondition += ` AND l.LogDate >= DATEADD(day, -${days}, GETDATE())`;
+    }
+    if (filters.volumeLevel) {
+      if (filters.volumeLevel === 'low') {
+        logFilterCondition += ` AND l.AntalSidor BETWEEN 1 AND 10`;
+      } else if (filters.volumeLevel === 'medium') {
+        logFilterCondition += ` AND l.AntalSidor BETWEEN 11 AND 50`;
+      } else if (filters.volumeLevel === 'high') {
+        logFilterCondition += ` AND l.AntalSidor > 50`;
+      }
+    }
+    
+    // Apply city filter to customers if specified
+    if (filters.city) {
+      whereCondition += ` AND k.Ort = '${filters.city.replace(/'/g, "''")}'`;
+    }
     
     const result = await pool.request().query(`
       SELECT TOP 15
         k.Ort as ort,
-        COUNT(l.LogID) as skannadeDokument,
-        COALESCE(SUM(l.AntalSidor), 0) as totalSidor,
+        COUNT(CASE WHEN ${logFilterCondition} THEN l.LogID END) as skannadeDokument,
+        COALESCE(SUM(CASE WHEN ${logFilterCondition} THEN l.AntalSidor ELSE 0 END), 0) as totalSidor,
         CASE 
           WHEN COUNT(DISTINCT CASE WHEN l.LogDate >= DATEADD(day, -30, GETDATE()) THEN l.CrmID END) > 0 
           THEN 'Aktiv' 
@@ -151,7 +290,7 @@ router.get('/customers-by-city', async (req, res) => {
         END as status
       FROM Kunder k
       LEFT JOIN Logs l ON k.CrmID = l.CrmID
-      WHERE k.Kedja = 'Länsfast' AND k.Ort IS NOT NULL AND k.Ort != ''
+      WHERE ${whereCondition}
       GROUP BY k.Ort
       ORDER BY skannadeDokument DESC
     `);
@@ -167,14 +306,37 @@ router.get('/customers-by-city', async (req, res) => {
 router.get('/customer-activity', async (req, res) => {
   try {
     const pool = await getPool();
+    const filters = req.query;
+    
+    // Build filter condition for activity calculation
+    let activityTimeCondition = "l.LogDate >= DATEADD(day, -30, GETDATE())";
+    
+    // Apply time-based filters for activity calculation
+    if (filters.lastDays) {
+      const days = parseInt(filters.lastDays);
+      activityTimeCondition = `l.LogDate >= DATEADD(day, -${days}, GETDATE())`;
+    } else if (filters.month && filters.year) {
+      activityTimeCondition = `MONTH(l.LogDate) = ${parseInt(filters.month)} AND YEAR(l.LogDate) = ${parseInt(filters.year)}`;
+    } else if (filters.quarter && filters.year) {
+      const quarter = parseInt(filters.quarter);
+      const startMonth = (quarter - 1) * 3 + 1;
+      const endMonth = quarter * 3;
+      activityTimeCondition = `MONTH(l.LogDate) BETWEEN ${startMonth} AND ${endMonth} AND YEAR(l.LogDate) = ${parseInt(filters.year)}`;
+    }
+    
+    // Apply geographic filters
+    let customerFilterCondition = "k.Kedja = 'Länsfast'";
+    if (filters.city) {
+      customerFilterCondition += ` AND k.Ort = '${filters.city.replace(/'/g, "''")}'`;
+    }
     
     const result = await pool.request().query(`
       SELECT 
         (SELECT COUNT(DISTINCT k.CrmID) 
          FROM Kunder k 
          INNER JOIN Logs l ON k.CrmID = l.CrmID 
-         WHERE k.Kedja = 'Länsfast' AND l.LogDate >= DATEADD(day, -30, GETDATE())) as active_count,
-        (SELECT COUNT(*) FROM Kunder WHERE Kedja = 'Länsfast') as total_count
+         WHERE ${customerFilterCondition} AND ${activityTimeCondition}) as active_count,
+        (SELECT COUNT(*) FROM Kunder k WHERE ${customerFilterCondition}) as total_count
     `);
 
     const { active_count, total_count } = result.recordset[0];
@@ -199,6 +361,40 @@ router.get('/customer-activity', async (req, res) => {
 router.get('/scanning-efficiency', async (req, res) => {
   try {
     const pool = await getPool();
+    const filters = req.query;
+    
+    // Build filter condition for efficiency calculation
+    let whereCondition = "k.Kedja = 'Länsfast'";
+    
+    // Apply time-based filters
+    if (filters.month && filters.year) {
+      whereCondition += ` AND MONTH(l.LogDate) = ${parseInt(filters.month)} AND YEAR(l.LogDate) = ${parseInt(filters.year)}`;
+    } else if (filters.quarter && filters.year) {
+      const quarter = parseInt(filters.quarter);
+      const startMonth = (quarter - 1) * 3 + 1;
+      const endMonth = quarter * 3;
+      whereCondition += ` AND MONTH(l.LogDate) BETWEEN ${startMonth} AND ${endMonth} AND YEAR(l.LogDate) = ${parseInt(filters.year)}`;
+    } else if (filters.lastDays) {
+      const days = parseInt(filters.lastDays);
+      whereCondition += ` AND l.LogDate >= DATEADD(day, -${days}, GETDATE())`;
+    } else {
+      whereCondition += ` AND MONTH(l.LogDate) = MONTH(GETDATE()) AND YEAR(l.LogDate) = YEAR(GETDATE())`;
+    }
+    
+    // Apply geographic and volume filters
+    if (filters.city) {
+      whereCondition += ` AND k.Ort = '${filters.city.replace(/'/g, "''")}'`;
+    }
+    
+    if (filters.volumeLevel) {
+      if (filters.volumeLevel === 'low') {
+        whereCondition += ` AND l.AntalSidor BETWEEN 1 AND 10`;
+      } else if (filters.volumeLevel === 'medium') {
+        whereCondition += ` AND l.AntalSidor BETWEEN 11 AND 50`;
+      } else if (filters.volumeLevel === 'high') {
+        whereCondition += ` AND l.AntalSidor > 50`;
+      }
+    }
     
     const result = await pool.request().query(`
       WITH BatchAnalysis AS (
@@ -214,9 +410,7 @@ router.get('/scanning-efficiency', async (req, res) => {
           END as IsBatch
         FROM Logs l 
         INNER JOIN Kunder k ON l.CrmID = k.CrmID
-        WHERE k.Kedja = 'Länsfast' 
-          AND MONTH(l.LogDate) = MONTH(GETDATE()) 
-          AND YEAR(l.LogDate) = YEAR(GETDATE())
+        WHERE ${whereCondition}
       ),
       EfficiencyCalc AS (
         SELECT 

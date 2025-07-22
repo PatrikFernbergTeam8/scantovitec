@@ -19,7 +19,14 @@ class ApiService {
     const params = new URLSearchParams();
     if (filters.month) params.append('month', filters.month);
     if (filters.year) params.append('year', filters.year);
+    if (filters.quarter) params.append('quarter', filters.quarter);
+    if (filters.week) params.append('week', filters.week);
+    if (filters.lastDays) params.append('lastDays', filters.lastDays);
+    if (filters.dateFrom) params.append('dateFrom', filters.dateFrom);
+    if (filters.dateTo) params.append('dateTo', filters.dateTo);
     if (filters.city) params.append('city', filters.city);
+    if (filters.volumeLevel) params.append('volumeLevel', filters.volumeLevel);
+    if (filters.customerActivity) params.append('customerActivity', filters.customerActivity);
     return params.toString() ? `?${params.toString()}` : '';
   }
 

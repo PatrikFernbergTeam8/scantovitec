@@ -29,6 +29,9 @@ import {
   FunnelIcon,
   CalendarDaysIcon,
   MapPinIcon,
+  ClockIcon,
+  ChartBarIcon,
+  UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
 
@@ -64,6 +67,42 @@ export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetF
     { value: 'Linköping', label: 'Linköping' },
     { value: 'Örebro', label: 'Örebro' },
     { value: 'Västerås', label: 'Västerås' }
+  ];
+
+  const quarters = [
+    { value: '1', label: 'Q1 (Jan-Mar)' },
+    { value: '2', label: 'Q2 (Apr-Jun)' },
+    { value: '3', label: 'Q3 (Jul-Sep)' },
+    { value: '4', label: 'Q4 (Okt-Dec)' }
+  ];
+
+  const years = [
+    { value: '2024', label: '2024' },
+    { value: '2023', label: '2023' },
+    { value: '2022', label: '2022' }
+  ];
+
+  const weekOptions = [
+    { value: 'current', label: 'Aktuell vecka' },
+    { value: 'last', label: 'Förra veckan' }
+  ];
+
+  const lastDaysOptions = [
+    { value: '7', label: 'Senaste 7 dagarna' },
+    { value: '30', label: 'Senaste 30 dagarna' },
+    { value: '90', label: 'Senaste 90 dagarna' }
+  ];
+
+  const volumeLevels = [
+    { value: 'low', label: 'Låg volym (1-10 sidor)' },
+    { value: 'medium', label: 'Medel volym (11-50 sidor)' },
+    { value: 'high', label: 'Hög volym (50+ sidor)' }
+  ];
+
+  const customerActivityLevels = [
+    { value: 'very_active', label: 'Mycket aktiva (senaste 7 dagarna)' },
+    { value: 'active', label: 'Aktiva (senaste 30 dagarna)' },
+    { value: 'inactive', label: 'Inaktiva (inga scanningar 30 dagar)' }
   ];
   
 
@@ -108,85 +147,232 @@ export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetF
         {/* Center: Navigation or Filters */}
         <div className="flex-1 flex justify-center items-center px-4">
           {pathname === '/dashboard/scantovitec' && filters ? (
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3 overflow-x-auto max-w-full">
+              <div className="flex items-center gap-2 flex-shrink-0">
                 <FunnelIcon className="h-4 w-4 text-gray-500" />
                 <Typography variant="small" className="font-medium text-gray-700">
                   Filter:
                 </Typography>
               </div>
               
-              {/* Month filter */}
-              <Menu>
-                <MenuHandler>
-                  <Button
-                    variant={filters.month ? "filled" : "outlined"}
-                    color={filters.month ? "blue" : "gray"}
-                    size="sm"
-                    className="flex items-center gap-2 normal-case min-w-32"
-                  >
-                    <CalendarDaysIcon className="h-4 w-4" />
-                    {filters.month ? months.find(m => m.value === filters.month)?.label : 'Välj månad'}
-                  </Button>
-                </MenuHandler>
-                <MenuList className="max-h-60 overflow-y-auto">
-                  <MenuItem onClick={() => onFilterChange({ ...filters, month: '' })}>
-                    Alla månader
-                  </MenuItem>
-                  {months.map((month) => (
-                    <MenuItem
-                      key={month.value}
-                      onClick={() => onFilterChange({ ...filters, month: month.value })}
-                      className={filters.month === month.value ? 'bg-blue-50' : ''}
+              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+                {/* Month filter */}
+                <Menu>
+                  <MenuHandler>
+                    <Button
+                      variant={filters.month ? "filled" : "outlined"}
+                      color={filters.month ? "blue" : "gray"}
+                      size="sm"
+                      className="flex items-center gap-1 normal-case min-w-fit flex-shrink-0"
                     >
-                      {month.label}
+                      <CalendarDaysIcon className="h-3 w-3" />
+                      {filters.month ? months.find(m => m.value === filters.month)?.label : 'Månad'}
+                    </Button>
+                  </MenuHandler>
+                  <MenuList className="max-h-60 overflow-y-auto">
+                    <MenuItem onClick={() => onFilterChange({ ...filters, month: '' })}>
+                      Alla månader
                     </MenuItem>
-                  ))}
-                </MenuList>
-              </Menu>
+                    {months.map((month) => (
+                      <MenuItem
+                        key={month.value}
+                        onClick={() => onFilterChange({ ...filters, month: month.value })}
+                        className={filters.month === month.value ? 'bg-blue-50' : ''}
+                      >
+                        {month.label}
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
 
-              {/* City filter */}
-              <Menu>
-                <MenuHandler>
-                  <Button
-                    variant={filters.city ? "filled" : "outlined"}
-                    color={filters.city ? "blue" : "gray"}
-                    size="sm"
-                    className="flex items-center gap-2 normal-case min-w-32"
-                  >
-                    <MapPinIcon className="h-4 w-4" />
-                    {filters.city ? cities.find(c => c.value === filters.city)?.label : 'Välj ort'}
-                  </Button>
-                </MenuHandler>
-                <MenuList className="max-h-60 overflow-y-auto">
-                  <MenuItem onClick={() => onFilterChange({ ...filters, city: '' })}>
-                    Alla orter
-                  </MenuItem>
-                  {cities.map((city) => (
-                    <MenuItem
-                      key={city.value}
-                      onClick={() => onFilterChange({ ...filters, city: city.value })}
-                      className={filters.city === city.value ? 'bg-blue-50' : ''}
+                {/* Year filter */}
+                <Menu>
+                  <MenuHandler>
+                    <Button
+                      variant={filters.year ? "filled" : "outlined"}
+                      color={filters.year ? "blue" : "gray"}
+                      size="sm"
+                      className="flex items-center gap-1 normal-case min-w-fit flex-shrink-0"
                     >
-                      {city.label}
+                      <CalendarDaysIcon className="h-3 w-3" />
+                      {filters.year ? years.find(y => y.value === filters.year)?.label : 'År'}
+                    </Button>
+                  </MenuHandler>
+                  <MenuList className="max-h-60 overflow-y-auto">
+                    <MenuItem onClick={() => onFilterChange({ ...filters, year: '' })}>
+                      Alla år
                     </MenuItem>
-                  ))}
-                </MenuList>
-              </Menu>
+                    {years.map((year) => (
+                      <MenuItem
+                        key={year.value}
+                        onClick={() => onFilterChange({ ...filters, year: year.value })}
+                        className={filters.year === year.value ? 'bg-blue-50' : ''}
+                      >
+                        {year.label}
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
 
-              {/* Reset button */}
-              {(filters.month || filters.city) && (
-                <Button
-                  variant="text"
-                  color="gray"
-                  size="sm"
-                  onClick={onResetFilters}
-                  className="flex items-center gap-2"
-                >
-                  <XMarkIcon className="h-4 w-4" />
-                  Rensa
-                </Button>
-              )}
+                {/* Quarter filter */}
+                <Menu>
+                  <MenuHandler>
+                    <Button
+                      variant={filters.quarter ? "filled" : "outlined"}
+                      color={filters.quarter ? "blue" : "gray"}
+                      size="sm"
+                      className="flex items-center gap-1 normal-case min-w-fit flex-shrink-0"
+                    >
+                      <ClockIcon className="h-3 w-3" />
+                      {filters.quarter ? quarters.find(q => q.value === filters.quarter)?.label : 'Kvartal'}
+                    </Button>
+                  </MenuHandler>
+                  <MenuList className="max-h-60 overflow-y-auto">
+                    <MenuItem onClick={() => onFilterChange({ ...filters, quarter: '' })}>
+                      Alla kvartal
+                    </MenuItem>
+                    {quarters.map((quarter) => (
+                      <MenuItem
+                        key={quarter.value}
+                        onClick={() => onFilterChange({ ...filters, quarter: quarter.value })}
+                        className={filters.quarter === quarter.value ? 'bg-blue-50' : ''}
+                      >
+                        {quarter.label}
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
+
+                {/* Last Days filter */}
+                <Menu>
+                  <MenuHandler>
+                    <Button
+                      variant={filters.lastDays ? "filled" : "outlined"}
+                      color={filters.lastDays ? "blue" : "gray"}
+                      size="sm"
+                      className="flex items-center gap-1 normal-case min-w-fit flex-shrink-0"
+                    >
+                      <ClockIcon className="h-3 w-3" />
+                      {filters.lastDays ? lastDaysOptions.find(d => d.value === filters.lastDays)?.label : 'Period'}
+                    </Button>
+                  </MenuHandler>
+                  <MenuList className="max-h-60 overflow-y-auto">
+                    <MenuItem onClick={() => onFilterChange({ ...filters, lastDays: '' })}>
+                      Alla perioder
+                    </MenuItem>
+                    {lastDaysOptions.map((option) => (
+                      <MenuItem
+                        key={option.value}
+                        onClick={() => onFilterChange({ ...filters, lastDays: option.value })}
+                        className={filters.lastDays === option.value ? 'bg-blue-50' : ''}
+                      >
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
+
+                {/* City filter */}
+                <Menu>
+                  <MenuHandler>
+                    <Button
+                      variant={filters.city ? "filled" : "outlined"}
+                      color={filters.city ? "blue" : "gray"}
+                      size="sm"
+                      className="flex items-center gap-1 normal-case min-w-fit flex-shrink-0"
+                    >
+                      <MapPinIcon className="h-3 w-3" />
+                      {filters.city ? cities.find(c => c.value === filters.city)?.label : 'Ort'}
+                    </Button>
+                  </MenuHandler>
+                  <MenuList className="max-h-60 overflow-y-auto">
+                    <MenuItem onClick={() => onFilterChange({ ...filters, city: '' })}>
+                      Alla orter
+                    </MenuItem>
+                    {cities.map((city) => (
+                      <MenuItem
+                        key={city.value}
+                        onClick={() => onFilterChange({ ...filters, city: city.value })}
+                        className={filters.city === city.value ? 'bg-blue-50' : ''}
+                      >
+                        {city.label}
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
+
+                {/* Volume Level filter */}
+                <Menu>
+                  <MenuHandler>
+                    <Button
+                      variant={filters.volumeLevel ? "filled" : "outlined"}
+                      color={filters.volumeLevel ? "blue" : "gray"}
+                      size="sm"
+                      className="flex items-center gap-1 normal-case min-w-fit flex-shrink-0"
+                    >
+                      <ChartBarIcon className="h-3 w-3" />
+                      {filters.volumeLevel ? volumeLevels.find(v => v.value === filters.volumeLevel)?.label : 'Volym'}
+                    </Button>
+                  </MenuHandler>
+                  <MenuList className="max-h-60 overflow-y-auto">
+                    <MenuItem onClick={() => onFilterChange({ ...filters, volumeLevel: '' })}>
+                      Alla volymer
+                    </MenuItem>
+                    {volumeLevels.map((level) => (
+                      <MenuItem
+                        key={level.value}
+                        onClick={() => onFilterChange({ ...filters, volumeLevel: level.value })}
+                        className={filters.volumeLevel === level.value ? 'bg-blue-50' : ''}
+                      >
+                        {level.label}
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
+
+                {/* Customer Activity filter */}
+                <Menu>
+                  <MenuHandler>
+                    <Button
+                      variant={filters.customerActivity ? "filled" : "outlined"}
+                      color={filters.customerActivity ? "blue" : "gray"}
+                      size="sm"
+                      className="flex items-center gap-1 normal-case min-w-fit flex-shrink-0"
+                    >
+                      <UserGroupIcon className="h-3 w-3" />
+                      {filters.customerActivity ? customerActivityLevels.find(a => a.value === filters.customerActivity)?.label : 'Aktivitet'}
+                    </Button>
+                  </MenuHandler>
+                  <MenuList className="max-h-60 overflow-y-auto">
+                    <MenuItem onClick={() => onFilterChange({ ...filters, customerActivity: '' })}>
+                      Alla aktivitetsnivåer
+                    </MenuItem>
+                    {customerActivityLevels.map((level) => (
+                      <MenuItem
+                        key={level.value}
+                        onClick={() => onFilterChange({ ...filters, customerActivity: level.value })}
+                        className={filters.customerActivity === level.value ? 'bg-blue-50' : ''}
+                      >
+                        {level.label}
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
+
+                {/* Reset button */}
+                {(filters.month || filters.year || filters.quarter || filters.lastDays || filters.city || filters.volumeLevel || filters.customerActivity) && (
+                  <Button
+                    variant="text"
+                    color="gray"
+                    size="sm"
+                    onClick={onResetFilters}
+                    className="flex items-center gap-1 flex-shrink-0"
+                  >
+                    <XMarkIcon className="h-3 w-3" />
+                    Rensa
+                  </Button>
+                )}
+              </div>
             </div>
           ) : (
             <div className="hidden lg:flex items-center gap-1">

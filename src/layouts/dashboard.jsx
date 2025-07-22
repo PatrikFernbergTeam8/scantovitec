@@ -23,7 +23,14 @@ export function Dashboard() {
   const [filters, setFilters] = useState({
     month: '',
     year: '',
-    city: ''
+    quarter: '',
+    week: '',
+    lastDays: '',
+    dateFrom: '',
+    dateTo: '',
+    city: '',
+    volumeLevel: '',
+    customerActivity: ''
   });
 
   const handleFilterChange = (newFilters) => {
@@ -34,7 +41,14 @@ export function Dashboard() {
     setFilters({
       month: '',
       year: '',
-      city: ''
+      quarter: '',
+      week: '',
+      lastDays: '',
+      dateFrom: '',
+      dateTo: '',
+      city: '',
+      volumeLevel: '',
+      customerActivity: ''
     });
   };
 
