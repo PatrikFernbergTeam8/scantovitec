@@ -1,4 +1,31 @@
-const { getPool } = require('../../backend/config/database');
+const sql = require('mssql');
+
+const config = {
+  server: process.env.DB_SERVER,
+  database: process.env.DB_DATABASE,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  port: parseInt(process.env.DB_PORT) || 1433,
+  options: {
+    encrypt: true,
+    trustServerCertificate: false,
+    enableArithAbort: true,
+  },
+  pool: {
+    max: 10,
+    min: 0,
+    idleTimeoutMillis: 30000,
+  },
+};
+
+let poolPromise;
+
+const getPool = async () => {
+  if (!poolPromise) {
+    poolPromise = sql.connect(config);
+  }
+  return poolPromise;
+};
 
 // Helper function to build WHERE clause based on filters
 function buildFilterWhereClause(filters) {
@@ -44,7 +71,7 @@ function buildFilterWhereClause(filters) {
 module.exports = async (req, res) => {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', process.env.NODE_ENV === 'production' ? 'https://scantovitec.vercel.app' : '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
