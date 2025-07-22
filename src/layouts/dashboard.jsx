@@ -1,4 +1,6 @@
 import { Routes, Route, useLocation } from "react-router-dom";
+import { useState } from "react";
+import React from "react";
 import { Cog6ToothIcon } from "@heroicons/react/24/solid";
 import { IconButton } from "@material-tailwind/react";
 import {
@@ -14,11 +16,36 @@ export function Dashboard() {
   const location = useLocation();
   const isHomePage = location.pathname === "/" || location.pathname === "/dashboard/home";
   const isTablesPage = location.pathname === "/dashboard/tables";
-  const isFullWidthPage = isHomePage || isTablesPage;
+  const isScantovitecPage = location.pathname === "/dashboard/scantovitec";
+  const isFullWidthPage = isHomePage || isTablesPage || isScantovitecPage;
+
+  // Filter state for scantovitec page
+  const [filters, setFilters] = useState({
+    month: '',
+    year: '',
+    city: ''
+  });
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+  const handleResetFilters = () => {
+    setFilters({
+      month: '',
+      year: '',
+      city: ''
+    });
+  };
 
   return (
     <div className="min-h-screen bg-blue-gray-50/50">
-      <HeaderNav routes={routes} />
+      <HeaderNav 
+        routes={routes} 
+        filters={isScantovitecPage ? filters : null}
+        onFilterChange={handleFilterChange}
+        onResetFilters={handleResetFilters}
+      />
       <Configurator />
       {isFullWidthPage ? (
         // Full-width pages without container constraints
@@ -26,8 +53,17 @@ export function Dashboard() {
           {routes.map(
             ({ layout, pages }) =>
               layout === "dashboard" &&
-              pages.map(({ path, element }) => (
-                <Route exact path={path} element={element} />
+              pages.map(({ path, element, name }) => (
+                <Route 
+                  key={path}
+                  exact 
+                  path={path} 
+                  element={
+                    name === 'scantovitec' 
+                      ? React.cloneElement(element, { filters, onFilterChange: handleFilterChange, onResetFilters: handleResetFilters })
+                      : element
+                  } 
+                />
               ))
           )}
         </Routes>
@@ -38,8 +74,17 @@ export function Dashboard() {
             {routes.map(
               ({ layout, pages }) =>
                 layout === "dashboard" &&
-                pages.map(({ path, element }) => (
-                  <Route exact path={path} element={element} />
+                pages.map(({ path, element, name }) => (
+                  <Route 
+                    key={path}
+                    exact 
+                    path={path} 
+                    element={
+                      name === 'scantovitec' 
+                        ? React.cloneElement(element, { filters, onFilterChange: handleFilterChange, onResetFilters: handleResetFilters })
+                        : element
+                    } 
+                  />
                 ))
             )}
           </Routes>

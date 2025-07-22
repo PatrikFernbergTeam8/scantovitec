@@ -10,15 +10,15 @@ import Chart from "react-apexcharts";
 
 export function StatisticsChart({ color, chart, title, description, footer }) {
   return (
-    <Card className="border border-blue-gray-100 shadow-sm">
-      <CardHeader variant="gradient" color={color} floated={false} shadow={false}>
+    <Card className="border border-blue-gray-100 shadow-sm h-full flex flex-col">
+      <CardHeader variant="filled" color="transparent" floated={false} shadow={false} className="bg-transparent flex-1">
         <Chart {...chart} />
       </CardHeader>
-      <CardBody className="px-6 pt-0">
-        <Typography variant="h6" color="blue-gray">
+      <CardBody className="px-4 py-2">
+        <Typography variant="h6" color="blue-gray" className="text-sm">
           {title}
         </Typography>
-        <Typography variant="small" className="font-normal text-blue-gray-600">
+        <Typography variant="small" className="font-normal text-blue-gray-600 text-xs">
           {description}
         </Typography>
       </CardBody>

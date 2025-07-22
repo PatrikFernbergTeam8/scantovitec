@@ -1,21 +1,19 @@
 import PropTypes from "prop-types";
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import {
   Navbar,
   Typography,
   Button,
   IconButton,
-  Input,
   Menu,
   MenuHandler,
   MenuList,
   MenuItem,
   Avatar,
-  Card,
-  List,
-  ListItem,
   Collapse,
+  Select,
+  Option,
 } from "@material-tailwind/react";
 import {
   UserCircleIcon,
@@ -27,9 +25,14 @@ import {
   XMarkIcon,
   ChevronDownIcon,
 } from "@heroicons/react/24/solid";
+import {
+  FunnelIcon,
+  CalendarDaysIcon,
+  MapPinIcon,
+} from "@heroicons/react/24/outline";
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
 
-export function HeaderNav({ brandName, routes }) {
+export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetFilters }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { fixedNavbar } = controller;
   const navigate = useNavigate();
@@ -37,76 +40,39 @@ export function HeaderNav({ brandName, routes }) {
   
   // Mobile menu state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const months = [
+    { value: '1', label: 'Januari' },
+    { value: '2', label: 'Februari' },
+    { value: '3', label: 'Mars' },
+    { value: '4', label: 'April' },
+    { value: '5', label: 'Maj' },
+    { value: '6', label: 'Juni' },
+    { value: '7', label: 'Juli' },
+    { value: '8', label: 'Augusti' },
+    { value: '9', label: 'September' },
+    { value: '10', label: 'Oktober' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' }
+  ];
+
+  const cities = [
+    { value: 'Stockholm', label: 'Stockholm' },
+    { value: 'Göteborg', label: 'Göteborg' },
+    { value: 'Malmö', label: 'Malmö' },
+    { value: 'Uppsala', label: 'Uppsala' },
+    { value: 'Linköping', label: 'Linköping' },
+    { value: 'Örebro', label: 'Örebro' },
+    { value: 'Västerås', label: 'Västerås' }
+  ];
   
-  // Search functionality
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [showResults, setShowResults] = useState(false);
-  const searchRef = useRef(null);
 
-  // Get all searchable pages from routes
-  const getSearchablePages = () => {
-    const pages = [];
-    routes.forEach(route => {
-      if (route.layout === "dashboard" && route.pages) {
-        route.pages.forEach(page => {
-          pages.push({
-            name: page.name,
-            path: `/${route.layout}${page.path}`,
-            icon: page.icon
-          });
-        });
-      }
-    });
-    return pages;
-  };
-
-  // Handle search
-  useEffect(() => {
-    if (searchQuery.trim() === "") {
-      setSearchResults([]);
-      setShowResults(false);
-      return;
-    }
-
-    const searchablePages = getSearchablePages();
-    const filtered = searchablePages.filter(page =>
-      page.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    
-    setSearchResults(filtered);
-    setShowResults(filtered.length > 0);
-  }, [searchQuery]);
-
-  // Handle search input change
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  // Handle result selection
-  const handleResultSelect = (path) => {
-    navigate(path);
-    setSearchQuery("");
-    setShowResults(false);
-  };
-
-  // Close results when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setShowResults(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  // Get main navigation items and sections
-  const mainRoutes = routes.find(route => route.layout === "dashboard" && !route.title)?.pages || [];
-  const sectionRoutes = routes.filter(route => route.layout === "dashboard" && route.title);
+  // Get main navigation items and sections (filter out items with showInNav: false)
+  const mainRoutes = routes.find(route => route.layout === "dashboard" && !route.title)?.pages.filter(page => page.showInNav !== false) || [];
+  const sectionRoutes = routes.filter(route => route.layout === "dashboard" && route.title).map(section => ({
+    ...section,
+    pages: section.pages.filter(page => page.showInNav !== false)
+  })).filter(section => section.pages.length > 0);
 
   return (
     <Navbar
@@ -122,7 +88,7 @@ export function HeaderNav({ brandName, routes }) {
       <div className="flex items-center justify-between px-4 py-2">
         
         {/* Left: Logo and Brand */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-shrink-0">
           <Link to="/dashboard/home" className="flex items-center gap-3">
             <img 
               src="/img/logo_svart.png" 
@@ -139,159 +105,147 @@ export function HeaderNav({ brandName, routes }) {
           </Link>
         </div>
 
-        {/* Center: Desktop Navigation */}
-        <div className="hidden lg:flex items-center gap-1">
-          {/* Main navigation items */}
-          {mainRoutes.map(({ icon, name, path }) => (
-            <NavLink key={name} to={`/dashboard${path}`}>
-              {({ isActive }) => (
-                <Button
-                  variant={isActive ? "gradient" : "text"}
-                  color={isActive ? "blue" : "blue-gray"}
-                  className="flex items-center gap-2 px-4 py-2 normal-case"
-                  size="sm"
-                >
-                  {icon}
-                  <span className="font-medium capitalize">{name}</span>
-                </Button>
-              )}
-            </NavLink>
-          ))}
+        {/* Center: Navigation or Filters */}
+        <div className="flex-1 flex justify-center items-center px-4">
+          {pathname === '/dashboard/scantovitec' && filters ? (
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <FunnelIcon className="h-4 w-4 text-gray-500" />
+                <Typography variant="small" className="font-medium text-gray-700">
+                  Filter:
+                </Typography>
+              </div>
+              
+              {/* Month filter */}
+              <Menu>
+                <MenuHandler>
+                  <Button
+                    variant={filters.month ? "filled" : "outlined"}
+                    color={filters.month ? "blue" : "gray"}
+                    size="sm"
+                    className="flex items-center gap-2 normal-case min-w-32"
+                  >
+                    <CalendarDaysIcon className="h-4 w-4" />
+                    {filters.month ? months.find(m => m.value === filters.month)?.label : 'Välj månad'}
+                  </Button>
+                </MenuHandler>
+                <MenuList className="max-h-60 overflow-y-auto">
+                  <MenuItem onClick={() => onFilterChange({ ...filters, month: '' })}>
+                    Alla månader
+                  </MenuItem>
+                  {months.map((month) => (
+                    <MenuItem
+                      key={month.value}
+                      onClick={() => onFilterChange({ ...filters, month: month.value })}
+                      className={filters.month === month.value ? 'bg-blue-50' : ''}
+                    >
+                      {month.label}
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Menu>
 
-          {/* Section dropdowns */}
-          {sectionRoutes.map((section) => (
-            <Menu key={section.title} placement="bottom-start">
-              <MenuHandler>
+              {/* City filter */}
+              <Menu>
+                <MenuHandler>
+                  <Button
+                    variant={filters.city ? "filled" : "outlined"}
+                    color={filters.city ? "blue" : "gray"}
+                    size="sm"
+                    className="flex items-center gap-2 normal-case min-w-32"
+                  >
+                    <MapPinIcon className="h-4 w-4" />
+                    {filters.city ? cities.find(c => c.value === filters.city)?.label : 'Välj ort'}
+                  </Button>
+                </MenuHandler>
+                <MenuList className="max-h-60 overflow-y-auto">
+                  <MenuItem onClick={() => onFilterChange({ ...filters, city: '' })}>
+                    Alla orter
+                  </MenuItem>
+                  {cities.map((city) => (
+                    <MenuItem
+                      key={city.value}
+                      onClick={() => onFilterChange({ ...filters, city: city.value })}
+                      className={filters.city === city.value ? 'bg-blue-50' : ''}
+                    >
+                      {city.label}
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Menu>
+
+              {/* Reset button */}
+              {(filters.month || filters.city) && (
                 <Button
                   variant="text"
-                  color="blue-gray"
-                  className="flex items-center gap-2 px-4 py-2 normal-case"
+                  color="gray"
                   size="sm"
+                  onClick={onResetFilters}
+                  className="flex items-center gap-2"
                 >
-                  <span className="font-medium capitalize">{section.title}</span>
-                  <ChevronDownIcon className="h-4 w-4" />
+                  <XMarkIcon className="h-4 w-4" />
+                  Rensa
                 </Button>
-              </MenuHandler>
-              <MenuList className="min-w-fit">
-                {section.pages.map(({ icon, name, path }) => {
-                  const isActive = pathname === `/dashboard${path}`;
-                  return (
-                    <MenuItem
-                      key={name}
-                      className={`flex items-center gap-3 ${isActive ? "bg-blue-50" : ""}`}
-                      onClick={() => navigate(`/dashboard${path}`)}
+              )}
+            </div>
+          ) : (
+            <div className="hidden lg:flex items-center gap-1">
+              {/* Main navigation items */}
+              {mainRoutes.map(({ icon, name, path }) => (
+                <NavLink key={name} to={`/dashboard${path}`}>
+                  {({ isActive }) => (
+                    <Button
+                      variant={isActive ? "gradient" : "text"}
+                      color={isActive ? "blue" : "blue-gray"}
+                      className="flex items-center gap-2 px-4 py-2 normal-case"
+                      size="sm"
                     >
                       {icon}
-                      <Typography variant="small" className="font-medium capitalize">
-                        {name}
-                      </Typography>
-                    </MenuItem>
-                  );
-                })}
-              </MenuList>
-            </Menu>
-          ))}
+                      <span className="font-medium capitalize">{name}</span>
+                    </Button>
+                  )}
+                </NavLink>
+              ))}
+
+              {/* Section dropdowns */}
+              {sectionRoutes.map((section) => (
+                <Menu key={section.title} placement="bottom-start">
+                  <MenuHandler>
+                    <Button
+                      variant="text"
+                      color="blue-gray"
+                      className="flex items-center gap-2 px-4 py-2 normal-case"
+                      size="sm"
+                    >
+                      <span className="font-medium capitalize">{section.title}</span>
+                      <ChevronDownIcon className="h-4 w-4" />
+                    </Button>
+                  </MenuHandler>
+                  <MenuList className="min-w-fit">
+                    {section.pages.map(({ icon, name, path }) => {
+                      const isActive = pathname === `/dashboard${path}`;
+                      return (
+                        <MenuItem
+                          key={name}
+                          className={`flex items-center gap-3 ${isActive ? "bg-blue-50" : ""}`}
+                          onClick={() => navigate(`/dashboard${path}`)}
+                        >
+                          {icon}
+                          <Typography variant="small" className="font-medium capitalize">
+                            {name}
+                          </Typography>
+                        </MenuItem>
+                      );
+                    })}
+                  </MenuList>
+                </Menu>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Right: Search, User Controls, Mobile Menu */}
-        <div className="flex items-center gap-2">
-          
-          {/* Search - Hidden on mobile */}
-          <div className="hidden md:block relative" ref={searchRef}>
-            <Input 
-              label="Sök sidor..."
-              size="md"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              onFocus={() => searchQuery && setShowResults(true)}
-              className="!min-w-[200px]"
-            />
-            {showResults && (
-              <Card className="absolute top-full left-0 right-0 mt-1 z-50 max-h-64 overflow-y-auto">
-                <List className="p-0">
-                  {searchResults.map((result, index) => (
-                    <ListItem
-                      key={index}
-                      className="flex items-center gap-3 hover:bg-blue-gray-50 cursor-pointer"
-                      onClick={() => handleResultSelect(result.path)}
-                    >
-                      {result.icon && <span className="text-blue-gray-500">{result.icon}</span>}
-                      <Typography variant="small" color="blue-gray" className="font-medium capitalize">
-                        {result.name}
-                      </Typography>
-                    </ListItem>
-                  ))}
-                </List>
-              </Card>
-            )}
-          </div>
-
-          {/* Notifications */}
-          <Menu>
-            <MenuHandler>
-              <IconButton variant="text" color="blue-gray" size="sm">
-                <BellIcon className="h-5 w-5" />
-              </IconButton>
-            </MenuHandler>
-            <MenuList className="w-max border-0">
-              <MenuItem className="flex items-center gap-3">
-                <Avatar
-                  src="https://demos.creative-tim.com/material-dashboard/assets/img/team-2.jpg"
-                  alt="notification"
-                  size="sm"
-                  variant="circular"
-                />
-                <div>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="mb-1 font-normal"
-                  >
-                    <strong>New message</strong> from Laur
-                  </Typography>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="flex items-center gap-1 text-xs font-normal opacity-60"
-                  >
-                    <ClockIcon className="h-3.5 w-3.5" /> 13 minutes ago
-                  </Typography>
-                </div>
-              </MenuItem>
-            </MenuList>
-          </Menu>
-
-          {/* Settings */}
-          <IconButton
-            variant="text"
-            color="blue-gray"
-            size="sm"
-            onClick={() => setOpenConfigurator(dispatch, true)}
-          >
-            <Cog6ToothIcon className="h-5 w-5" />
-          </IconButton>
-
-          {/* Sign In */}
-          <Link to="/auth/sign-in">
-            <Button
-              variant="text"
-              color="blue-gray"
-              size="sm"
-              className="hidden xl:flex items-center gap-1 px-4 normal-case"
-            >
-              <UserCircleIcon className="h-4 w-4" />
-              Sign In
-            </Button>
-            <IconButton
-              variant="text"
-              color="blue-gray"
-              size="sm"
-              className="xl:hidden"
-            >
-              <UserCircleIcon className="h-5 w-5" />
-            </IconButton>
-          </Link>
-
+        {/* Right: Mobile Menu */}
+        <div className="flex items-center gap-2 flex-shrink-0">
           {/* Mobile Menu Toggle */}
           <IconButton
             variant="text"
@@ -313,15 +267,6 @@ export function HeaderNav({ brandName, routes }) {
       <Collapse open={mobileMenuOpen} className="lg:hidden">
         <div className="px-4 py-4 border-t border-blue-gray-100">
           
-          {/* Mobile Search */}
-          <div className="mb-4" ref={searchRef}>
-            <Input 
-              label="Sök sidor..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              onFocus={() => searchQuery && setShowResults(true)}
-            />
-          </div>
 
           {/* Mobile Navigation Links */}
           <div className="space-y-2">
@@ -392,6 +337,9 @@ HeaderNav.defaultProps = {
 HeaderNav.propTypes = {
   brandName: PropTypes.string,
   routes: PropTypes.arrayOf(PropTypes.object).isRequired,
+  filters: PropTypes.object,
+  onFilterChange: PropTypes.func,
+  onResetFilters: PropTypes.func,
 };
 
 HeaderNav.displayName = "/src/widgets/layout/header-nav.jsx";
