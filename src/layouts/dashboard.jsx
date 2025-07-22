@@ -54,12 +54,14 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-blue-gray-50/50">
-      <HeaderNav 
-        routes={routes} 
-        filters={isScantovitecPage ? filters : null}
-        onFilterChange={handleFilterChange}
-        onResetFilters={handleResetFilters}
-      />
+      {!isScantovitecPage && (
+        <HeaderNav 
+          routes={routes} 
+          filters={null}
+          onFilterChange={handleFilterChange}
+          onResetFilters={handleResetFilters}
+        />
+      )}
       <Configurator />
       {isFullWidthPage ? (
         // Full-width pages without container constraints

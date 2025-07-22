@@ -14,7 +14,7 @@ export function StatisticsChart({ color, chart, title, description, footer }) {
       <CardHeader variant="filled" color="transparent" floated={false} shadow={false} className="bg-transparent flex-1">
         <Chart {...chart} />
       </CardHeader>
-      <CardBody className="px-[1rem] py-[0.5rem]">
+      <CardBody className="px-[0.5rem] py-[0.25rem] sm:px-[0.75rem] sm:py-[0.375rem] md:px-[1rem] md:py-[0.5rem]">
         <Typography variant="h6" color="blue-gray" className="text-sm">
           {title}
         </Typography>
@@ -23,7 +23,7 @@ export function StatisticsChart({ color, chart, title, description, footer }) {
         </Typography>
       </CardBody>
       {footer && (
-        <CardFooter className="px-[1.5rem] py-[1.25rem] bg-gray-50/30">
+        <CardFooter className="px-[0.75rem] py-[0.5rem] sm:px-[1rem] sm:py-[0.75rem] md:px-[1.5rem] md:py-[1.25rem] bg-gray-50/30">
           {footer}
         </CardFooter>
       )}

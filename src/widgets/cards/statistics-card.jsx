@@ -15,11 +15,11 @@ export function StatisticsCard({ color, icon, title, value, footer }) {
         color={color}
         floated={false}
         shadow={false}
-        className="absolute grid h-[3rem] w-[3rem] place-items-center"
+        className="absolute grid h-[2rem] w-[2rem] sm:h-[2.5rem] sm:w-[2.5rem] md:h-[3rem] md:w-[3rem] place-items-center"
       >
         {icon}
       </CardHeader>
-      <CardBody className="p-[1rem] text-right">
+      <CardBody className="p-[0.5rem] sm:p-[0.75rem] md:p-[1rem] text-right">
         <Typography variant="small" className="font-normal text-blue-gray-600">
           {title}
         </Typography>
@@ -28,7 +28,7 @@ export function StatisticsCard({ color, icon, title, value, footer }) {
         </Typography>
       </CardBody>
       {footer && (
-        <CardFooter className="p-[1rem] bg-gray-50/30">
+        <CardFooter className="p-[0.5rem] sm:p-[0.75rem] md:p-[1rem] bg-gray-50/30">
           {footer}
         </CardFooter>
       )}

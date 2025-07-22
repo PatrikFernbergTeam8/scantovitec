@@ -108,7 +108,7 @@ export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetF
 
   // Helper function for modern filter button styling
   const getFilterButtonClass = (isActive) => {
-    return `flex items-center gap-[0.5rem] normal-case min-w-fit flex-shrink-0 px-[0.75rem] py-[0.5rem] rounded-xl transition-all duration-200 focus:outline-none focus:ring-0 focus:shadow-none ${
+    return `flex items-center gap-[0.25rem] sm:gap-[0.5rem] normal-case min-w-fit flex-shrink-0 px-[0.5rem] sm:px-[0.75rem] py-[0.25rem] sm:py-[0.5rem] rounded-lg sm:rounded-xl transition-all duration-200 focus:outline-none focus:ring-0 focus:shadow-none text-xs sm:text-sm ${
       isActive 
         ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border border-blue-200/50' 
         : 'bg-white text-gray-700 border border-gray-200 hover:border-gray-300'
@@ -134,7 +134,7 @@ export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetF
       fullWidth
       blurred={fixedNavbar}
     >
-      <div className="flex items-center justify-between px-[0.25rem] mt-[0.5rem] -mb-[1.5rem] h-[4rem]">
+      <div className="flex items-center justify-between px-[0.25rem] mt-[0.25rem] sm:mt-[0.5rem] -mb-[0.75rem] sm:-mb-[1.5rem] h-[3rem] sm:h-[4rem]">
         
         {/* Left: Logo and Brand */}
         <div className="flex items-center gap-[1rem] flex-shrink-0">
@@ -142,25 +142,25 @@ export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetF
             <img 
               src="/img/LF_Logo.png" 
               alt="Logo" 
-              className="h-[6rem] w-auto object-contain"
+              className="h-[3rem] sm:h-[4rem] lg:h-[6rem] w-auto object-contain"
             />
           </Link>
         </div>
 
         {/* Center: Navigation or Filters */}
-        <div className="flex-1 flex justify-start items-center px-[1rem] ml-[16rem]">
+        <div className="flex-1 flex justify-start items-center px-[0.5rem] sm:px-[1rem] ml-0 sm:ml-[8rem] lg:ml-[16rem]">
           {pathname === '/dashboard/scantovitec' && filters ? (
-            <div className="flex items-center gap-[1rem] overflow-x-auto max-w-full">
-              <div className="flex items-center gap-[0.75rem] flex-shrink-0">
-                <div className="flex items-center gap-[0.5rem] bg-gradient-to-r from-blue-50 to-indigo-50 px-[0.75rem] py-[0.5rem] rounded-full border border-blue-200/50">
-                  <FunnelIcon className="h-[1rem] w-[1rem] text-blue-600" />
-                  <Typography variant="small" className="font-semibold text-blue-700">
+            <div className="flex items-center gap-[0.5rem] sm:gap-[1rem] overflow-x-auto max-w-full w-full">
+              <div className="flex items-center gap-[0.5rem] sm:gap-[0.75rem] flex-shrink-0">
+                <div className="flex items-center gap-[0.25rem] sm:gap-[0.5rem] bg-gradient-to-r from-blue-50 to-indigo-50 px-[0.5rem] sm:px-[0.75rem] py-[0.25rem] sm:py-[0.5rem] rounded-full border border-blue-200/50">
+                  <FunnelIcon className="h-[0.75rem] w-[0.75rem] sm:h-[1rem] sm:w-[1rem] text-blue-600" />
+                  <Typography variant="small" className="font-semibold text-blue-700 text-xs sm:text-sm">
                     Filter
                   </Typography>
                 </div>
               </div>
               
-              <div className="flex items-center gap-[0.75rem] overflow-x-auto scrollbar-hide">
+              <div className="flex items-center gap-[0.5rem] sm:gap-[0.75rem] overflow-x-auto scrollbar-hide">
                 {/* Month filter */}
                 <Menu>
                   <MenuHandler>
@@ -168,7 +168,7 @@ export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetF
                       variant="text"
                       className={getFilterButtonClass(filters.month)}
                     >
-                      <CalendarDaysIcon className="h-[1rem] w-[1rem]" />
+                      <CalendarDaysIcon className="h-[0.75rem] w-[0.75rem] sm:h-[1rem] sm:w-[1rem]" />
                       <span className="font-medium text-sm">
                         {filters.month ? months.find(m => m.value === filters.month)?.label : 'Månad'}
                       </span>
@@ -197,7 +197,7 @@ export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetF
                       variant="text"
                       className={getFilterButtonClass(filters.year)}
                     >
-                      <CalendarDaysIcon className="h-[1rem] w-[1rem]" />
+                      <CalendarDaysIcon className="h-[0.75rem] w-[0.75rem] sm:h-[1rem] sm:w-[1rem]" />
                       <span className="font-medium text-sm">
                         {filters.year ? years.find(y => y.value === filters.year)?.label : 'År'}
                       </span>
@@ -226,7 +226,7 @@ export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetF
                       variant="text"
                       className={getFilterButtonClass(filters.quarter)}
                     >
-                      <ClockIcon className="h-[1rem] w-[1rem]" />
+                      <ClockIcon className="h-[0.75rem] w-[0.75rem] sm:h-[1rem] sm:w-[1rem]" />
                       <span className="font-medium text-sm">
                         {filters.quarter ? quarters.find(q => q.value === filters.quarter)?.label : 'Kvartal'}
                       </span>
@@ -255,7 +255,7 @@ export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetF
                       variant="text"
                       className={getFilterButtonClass(filters.lastDays)}
                     >
-                      <ClockIcon className="h-[1rem] w-[1rem]" />
+                      <ClockIcon className="h-[0.75rem] w-[0.75rem] sm:h-[1rem] sm:w-[1rem]" />
                       <span className="font-medium text-sm">
                         {filters.lastDays ? lastDaysOptions.find(d => d.value === filters.lastDays)?.label : 'Period'}
                       </span>
@@ -284,7 +284,7 @@ export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetF
                       variant="text"
                       className={getFilterButtonClass(filters.city)}
                     >
-                      <MapPinIcon className="h-[1rem] w-[1rem]" />
+                      <MapPinIcon className="h-[0.75rem] w-[0.75rem] sm:h-[1rem] sm:w-[1rem]" />
                       <span className="font-medium text-sm">
                         {filters.city ? cities.find(c => c.value === filters.city)?.label : 'Ort'}
                       </span>
@@ -313,7 +313,7 @@ export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetF
                       variant="text"
                       className={getFilterButtonClass(filters.volumeLevel)}
                     >
-                      <ChartBarIcon className="h-[1rem] w-[1rem]" />
+                      <ChartBarIcon className="h-[0.75rem] w-[0.75rem] sm:h-[1rem] sm:w-[1rem]" />
                       <span className="font-medium text-sm">
                         {filters.volumeLevel ? volumeLevels.find(v => v.value === filters.volumeLevel)?.label : 'Volym'}
                       </span>
@@ -342,7 +342,7 @@ export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetF
                       variant="text"
                       className={getFilterButtonClass(filters.customerActivity)}
                     >
-                      <UserGroupIcon className="h-[1rem] w-[1rem]" />
+                      <UserGroupIcon className="h-[0.75rem] w-[0.75rem] sm:h-[1rem] sm:w-[1rem]" />
                       <span className="font-medium text-sm">
                         {filters.customerActivity ? customerActivityLevels.find(a => a.value === filters.customerActivity)?.label : 'Aktivitet'}
                       </span>
@@ -369,9 +369,9 @@ export function HeaderNav({ brandName, routes, filters, onFilterChange, onResetF
                   <Button
                     variant="text"
                     onClick={onResetFilters}
-                    className="flex items-center gap-[0.5rem] flex-shrink-0 px-[0.75rem] py-[0.5rem] rounded-xl transition-all duration-200 bg-gray-100 text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-200 focus:outline-none focus:ring-0 focus:shadow-none"
+                    className="flex items-center gap-[0.25rem] sm:gap-[0.5rem] flex-shrink-0 px-[0.5rem] sm:px-[0.75rem] py-[0.25rem] sm:py-[0.5rem] rounded-lg sm:rounded-xl transition-all duration-200 bg-gray-100 text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-200 focus:outline-none focus:ring-0 focus:shadow-none text-xs sm:text-sm"
                   >
-                    <XMarkIcon className="h-[1rem] w-[1rem]" />
+                    <XMarkIcon className="h-[0.75rem] w-[0.75rem] sm:h-[1rem] sm:w-[1rem]" />
                     <span className="font-medium text-sm">Rensa</span>
                   </Button>
                 )}

@@ -14,6 +14,7 @@ app.use(helmet());
 app.use(cors({
   origin: [
     'http://localhost:5175',
+    'http://localhost:5177',
     'https://scantovitec.vercel.app'
   ],
   credentials: true
