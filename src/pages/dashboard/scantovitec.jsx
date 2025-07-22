@@ -9,7 +9,7 @@ import {
   UserGroupIcon, 
   DocumentTextIcon, 
   ChartBarIcon 
-} from "@heroicons/react/24/solid";
+} from "@heroicons/react/24/outline";
 import {
   FunnelIcon,
   CalendarDaysIcon,
@@ -542,7 +542,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
             title={item.title}
             value={item.value}
             icon={React.createElement(iconMap[item.icon], {
-              className: "w-[0.75rem] h-[0.75rem] sm:w-[1rem] sm:h-[1rem] md:w-[1.25rem] md:h-[1.25rem] text-white",
+              className: "w-[1.5rem] h-[1.5rem] sm:w-[2rem] sm:h-[2rem] md:w-[2.5rem] md:h-[2.5rem] text-blue-600",
             })}
             footer={
               <Typography className="font-normal text-blue-gray-600 text-xs">

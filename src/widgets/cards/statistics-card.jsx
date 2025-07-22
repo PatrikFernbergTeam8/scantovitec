@@ -10,22 +10,18 @@ import PropTypes from "prop-types";
 export function StatisticsCard({ color, icon, title, value, footer }) {
   return (
     <Card className="shadow-lg shadow-gray-500/40 border-0 bg-white drop-shadow-lg">
-      <CardHeader
-        variant="gradient"
-        color={color}
-        floated={false}
-        shadow={false}
-        className="absolute grid h-[2rem] w-[2rem] sm:h-[2.5rem] sm:w-[2.5rem] md:h-[3rem] md:w-[3rem] place-items-center"
-      >
-        {icon}
-      </CardHeader>
-      <CardBody className="p-[0.5rem] sm:p-[0.75rem] md:p-[1rem] text-right">
-        <Typography variant="small" className="font-normal text-blue-gray-600">
-          {title}
-        </Typography>
-        <Typography variant="h4" color="blue-gray">
-          {value}
-        </Typography>
+      <CardBody className="p-[0.5rem] sm:p-[0.75rem] md:p-[1rem] text-left flex items-start gap-3">
+        <div className="flex-shrink-0">
+          {icon}
+        </div>
+        <div className="flex-1 text-right">
+          <Typography variant="small" className="font-normal text-blue-gray-600">
+            {title}
+          </Typography>
+          <Typography variant="h4" color="blue-gray">
+            {value}
+          </Typography>
+        </div>
       </CardBody>
       {footer && (
         <CardFooter className="p-[0.5rem] sm:p-[0.75rem] md:p-[1rem] bg-gray-50/30">

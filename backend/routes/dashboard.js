@@ -151,7 +151,7 @@ router.get('/statistics', async (req, res) => {
 
     const statistics = [
       {
-        color: "gray",
+        color: "light-blue",
         icon: "BuildingOfficeIcon",
         title: "Totalt antal kontor",
         value: queries[0].recordset[0].totalKunder || 0,
@@ -162,7 +162,7 @@ router.get('/statistics', async (req, res) => {
         }
       },
       {
-        color: "gray", 
+        color: "light-blue", 
         icon: "UserGroupIcon",
         title: "Aktiva Kontor",
         value: queries[1].recordset[0].activeKunder || 0,
@@ -173,7 +173,7 @@ router.get('/statistics', async (req, res) => {
         }
       },
       {
-        color: "gray",
+        color: "light-blue",
         icon: "DocumentTextIcon", 
         title: "Totalt Skannade Sidor",
         value: `${queries[2].recordset[0].totalSidor || 0}`,
@@ -184,7 +184,7 @@ router.get('/statistics', async (req, res) => {
         }
       },
       {
-        color: "gray",
+        color: "light-blue",
         icon: "ChartBarIcon",
         title: "Totalt Skannade Dokument",
         value: queries[3].recordset[0].totalScans || 0,
