@@ -228,11 +228,11 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
   }
 
   return (
-    <div className="h-[calc(100vh-80px)] w-full overflow-visible flex flex-col">
+    <div className="h-[calc(100vh-5rem)] w-full overflow-visible flex flex-col">
       {/* Statistics Cards - Compact responsive grid with shadow space */}
-      <div className="flex-shrink-0 grid gap-2 sm:gap-3 md:gap-4 
+      <div className="flex-shrink-0 grid gap-[0.5rem] sm:gap-[0.75rem] md:gap-[1rem] 
                       grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4
-                      px-2 sm:px-3 md:px-4 pt-4 sm:pt-5 md:pt-6 pb-1 sm:pb-1.5 md:pb-2">
+                      px-[0.5rem] sm:px-[0.75rem] md:px-[1rem] pt-[1rem] sm:pt-[1.25rem] md:pt-[1.5rem] pb-[0.25rem] sm:pb-[0.375rem] md:pb-[0.5rem]">
         {statisticsData.map((item) => (
           <StatisticsCard
             key={item.title}
@@ -240,7 +240,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
             title={item.title}
             value={item.value}
             icon={React.createElement(iconMap[item.icon], {
-              className: "w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-white",
+              className: "w-[0.75rem] h-[0.75rem] sm:w-[1rem] sm:h-[1rem] md:w-[1.25rem] md:h-[1.25rem] text-white",
             })}
             footer={
               <Typography className="font-normal text-blue-gray-600 text-xs">
@@ -253,8 +253,8 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
       </div>
       
       {/* Charts Grid - Takes remaining space with adequate spacing for shadows */}
-      <div className="flex-1 px-2 sm:px-3 md:px-4 pt-1 sm:pt-1.5 md:pt-2 pb-2 sm:pb-3 md:pb-4 overflow-visible">
-        <div className="h-full grid gap-2 sm:gap-3 md:gap-4 
+      <div className="flex-1 px-[0.5rem] sm:px-[0.75rem] md:px-[1rem] pt-[0.25rem] sm:pt-[0.375rem] md:pt-[0.5rem] pb-[0.5rem] sm:pb-[0.75rem] md:pb-[1rem] overflow-visible">
+        <div className="h-full grid gap-[0.5rem] sm:gap-[0.75rem] md:gap-[1rem] 
                         grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4" 
                         style={{gridTemplateRows: '1fr 1fr'}}>
           {chartsData.map((item, index) => (
@@ -269,30 +269,30 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
             }`}>
               {item.type === 'table' ? (
                 <Card className="shadow-lg shadow-gray-500/40 border-0 bg-white h-full flex flex-col drop-shadow-lg">
-                  <CardHeader variant="gradient" color="white" floated={false} shadow={false} className="p-4">
+                  <CardHeader variant="gradient" color="white" floated={false} shadow={false} className="p-[1rem]">
                     <Typography variant="h6" color="blue-gray">
                       {item.title}
                     </Typography>
                   </CardHeader>
-                  <CardBody className="px-4 pt-0 pb-4 overflow-auto flex-1" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}} 
+                  <CardBody className="px-[1rem] pt-0 pb-[1rem] overflow-auto flex-1" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}} 
                             onScroll={(e) => e.target.style.setProperty('-webkit-scrollbar', 'none')}>
                     <div className="overflow-x-auto" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
                       <table className="w-full text-left table-auto">
                         <thead>
                           <tr className="bg-gray-50/50">
-                            <th className="p-2 text-xs font-medium text-blue-gray-600">Ort</th>
-                            <th className="p-2 text-xs font-medium text-blue-gray-600">Skannade Dokument</th>
-                            <th className="p-2 text-xs font-medium text-blue-gray-600">Sidor</th>
-                            <th className="p-2 text-xs font-medium text-blue-gray-600">Status</th>
+                            <th className="p-[0.5rem] text-xs font-medium text-blue-gray-600">Ort</th>
+                            <th className="p-[0.5rem] text-xs font-medium text-blue-gray-600">Skannade Dokument</th>
+                            <th className="p-[0.5rem] text-xs font-medium text-blue-gray-600">Sidor</th>
+                            <th className="p-[0.5rem] text-xs font-medium text-blue-gray-600">Status</th>
                           </tr>
                         </thead>
                         <tbody>
                           {item.data.map((customer, i) => (
                             <tr key={i} className="hover:bg-gray-50/30 transition-colors">
-                              <td className="p-2 text-xs text-blue-gray-900 font-medium">{customer.ort}</td>
-                              <td className="p-2 text-xs text-blue-gray-600">{customer.skannadeDokument}</td>
-                              <td className="p-2 text-xs text-blue-gray-600">{customer.totalSidor}</td>
-                              <td className="p-2 text-xs">
+                              <td className="p-[0.5rem] text-xs text-blue-gray-900 font-medium">{customer.ort}</td>
+                              <td className="p-[0.5rem] text-xs text-blue-gray-600">{customer.skannadeDokument}</td>
+                              <td className="p-[0.5rem] text-xs text-blue-gray-600">{customer.totalSidor}</td>
+                              <td className="p-[0.5rem] text-xs">
                                 <span className={`px-2 py-1 rounded-full text-xs ${
                                   customer.status === 'Aktiv' 
                                     ? 'bg-green-100 text-green-800' 
