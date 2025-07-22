@@ -86,7 +86,7 @@ module.exports = async (req, res) => {
       {
         color: "gray",
         icon: "BuildingOfficeIcon",
-        title: "Totalt Kunder",
+        title: "Totalt antal kontor",
         value: queries[0].recordset[0].totalKunder || 0,
         footer: {
           color: "text-blue-500",
