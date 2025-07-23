@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.PROD ? '/api' : 'http://localhost:5000/api';
+// Hybrid solution: Azure frontend + Vercel API (for PLAYipp compatibility)
+const API_BASE_URL = import.meta.env.PROD ? 'https://scantovitec.vercel.app/api' : 'http://localhost:5000/api';
 
 class ApiService {
   async fetchWithErrorHandling(url) {
