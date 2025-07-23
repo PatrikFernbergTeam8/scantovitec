@@ -89,14 +89,17 @@ module.exports = async function (context, req) {
     const hasFilters = filters.month || filters.year || filters.quarter || 
                       filters.lastDays !== undefined || filters.volumeLevel || filters.city;
     
-    // Use TOP 15 only if filters are applied, otherwise show all
+    // Use TOP 15 only if filters are applied, otherwise show all with last 30 days filter
     const topClause = hasFilters ? 'TOP 15' : '';
+    
+    // When no filters are applied, always use last 30 days for activity data
+    const finalLogFilterCondition = hasFilters ? logFilterCondition : "l.LogDate >= DATEADD(day, -30, GETDATE())";
     
     const result = await pool.request().query(`
       SELECT ${topClause}
         k.Ort as ort,
-        COUNT(CASE WHEN ${logFilterCondition} THEN l.LogID END) as skannadeDokument,
-        COALESCE(SUM(CASE WHEN ${logFilterCondition} THEN l.AntalSidor ELSE 0 END), 0) as totalSidor,
+        COUNT(CASE WHEN ${finalLogFilterCondition} THEN l.LogID END) as skannadeDokument,
+        COALESCE(SUM(CASE WHEN ${finalLogFilterCondition} THEN l.AntalSidor ELSE 0 END), 0) as totalSidor,
         CASE 
           WHEN COUNT(DISTINCT CASE WHEN l.LogDate >= DATEADD(day, -30, GETDATE()) THEN l.CrmID END) > 0 
           THEN 'Aktiv' 
@@ -110,7 +113,7 @@ module.exports = async function (context, req) {
     `);
 
     // Determine title text based on active filters
-    let titleText = hasFilters ? "Mest Aktiva Kontor Senaste 30 Dagarna" : "Lista med alla kontor"; // Default
+    let titleText = hasFilters ? "Mest Aktiva Kontor Senaste 30 Dagarna" : "Alla kontor - Senaste 30 dagarna"; // Default
     
     if (filters.lastDays) {
       const days = parseInt(filters.lastDays);
