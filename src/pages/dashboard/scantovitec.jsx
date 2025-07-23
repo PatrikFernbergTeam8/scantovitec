@@ -135,7 +135,6 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
             description: "Skannade dokument per månad",
             chart: {
               ...scanningActivity,
-              height: 200,
               options: {
                 colors: ["#388e3c"],
                 plotOptions: {
@@ -149,7 +148,6 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
                 },
                 chart: {
                   toolbar: { show: false },
-                  height: 200,
                 },
                 dataLabels: { enabled: false },
                 grid: {
@@ -169,9 +167,8 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
             description: "Aktiva/Inaktiva kunder",
             chart: {
               ...customerActivity,
-              height: 180,
               options: {
-                chart: { type: "donut", height: 180 },
+                chart: { type: "donut" },
                 labels: ["Aktiva Kunder", "Inaktiva Kunder"],
                 colors: ["#388e3c", "#e0e0e0"],
                 legend: { show: false },
@@ -215,9 +212,8 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
             description: "Andel scanningar i batch (inom 5 min)",
             chart: {
               ...scanningEfficiency,
-              height: 180,
               options: {
-                chart: { type: "donut", height: 180 },
+                chart: { type: "donut" },
                 labels: ["Batch-scanningar", "Enstaka scanningar"],
                 colors: ["#0288d1", "#e0e0e0"],
                 legend: { 
