@@ -33,31 +33,31 @@ class ApiService {
   // Get dashboard statistics cards data
   async getStatistics(filters = {}) {
     const queryString = this.buildQueryString(filters);
-    return this.fetchWithErrorHandling(`${API_BASE_URL}/dashboard/statistics${queryString}`);
+    return this.fetchWithErrorHandling(`${API_BASE_URL}/statistics${queryString}`);
   }
 
   // Get scanning activity chart data
   async getScanningActivity(filters = {}) {
     const queryString = this.buildQueryString(filters);
-    return this.fetchWithErrorHandling(`${API_BASE_URL}/dashboard/scanning-activity${queryString}`);
+    return this.fetchWithErrorHandling(`${API_BASE_URL}/scanning-activity${queryString}`);
   }
 
   // Get customers by city table data
   async getCustomersByCity(filters = {}) {
     const queryString = this.buildQueryString(filters);
-    return this.fetchWithErrorHandling(`${API_BASE_URL}/dashboard/customers-by-city${queryString}`);
+    return this.fetchWithErrorHandling(`${API_BASE_URL}/customers-by-city${queryString}`);
   }
 
   // Get customer activity distribution
   async getCustomerActivity(filters = {}) {
     const queryString = this.buildQueryString(filters);
-    return this.fetchWithErrorHandling(`${API_BASE_URL}/dashboard/customer-activity${queryString}`);
+    return this.fetchWithErrorHandling(`${API_BASE_URL}/customer-activity${queryString}`);
   }
 
   // Get scanning efficiency metrics
   async getScanningEfficiency(filters = {}) {
     const queryString = this.buildQueryString(filters);
-    return this.fetchWithErrorHandling(`${API_BASE_URL}/dashboard/scanning-efficiency${queryString}`);
+    return this.fetchWithErrorHandling(`${API_BASE_URL}/scanning-efficiency${queryString}`);
   }
 }
 
