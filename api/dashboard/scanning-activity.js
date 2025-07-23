@@ -81,22 +81,26 @@ module.exports = async (req, res) => {
           WHEN 11 THEN 'Nov'
           WHEN 12 THEN 'Dec'
         END as month,
-        COALESCE(SUM(l.AntalSidor), 0) as totalPages
+        YEAR(l.LogDate) as year,
+        COUNT(*) as totalDocuments
       FROM Logs l 
       INNER JOIN Kunder k ON l.CrmID = k.CrmID
       WHERE ${whereCondition}
-      GROUP BY MONTH(l.LogDate)
-      ORDER BY MONTH(l.LogDate)
+      GROUP BY MONTH(l.LogDate), YEAR(l.LogDate)
+      ORDER BY YEAR(l.LogDate), MONTH(l.LogDate)
     `);
 
-    const data = result.recordset.map(row => row.totalPages);
-    const categories = result.recordset.map(row => row.month);
+    const data = result.recordset.map(row => row.totalDocuments);
+    const categories = result.recordset.map(row => {
+      const yearShort = row.year.toString().slice(-2);
+      return `${row.month} ${yearShort}`;
+    });
 
     res.json({
       type: "bar",
       height: 200,
       series: [{
-        name: "Sidor",
+        name: "Dokument",
         data: data
       }],
       categories: categories

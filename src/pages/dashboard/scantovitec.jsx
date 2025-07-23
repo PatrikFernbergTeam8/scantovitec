@@ -131,8 +131,8 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
         const updatedChartsData = [
           {
             color: "white",
-            title: "Scanning Aktivitet",
-            description: "Sidor scannde per månad",
+            title: "Skannade Dokument",
+            description: "Skannade dokument per månad",
             chart: {
               ...scanningActivity,
               options: {
