@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Network Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>PLAYipp Network Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.textContent = new Date().toISOString() + ': ' + message;
+            document.getElementById('results').appendChild(div);
+            console.log(message);
+        }
+        
+        log('Test started');
+        log('User Agent: ' + navigator.userAgent);
+        log('Current URL: ' + window.location.href);
+        
+        // Test 1: Basic connectivity
+        setTimeout(() => {
+            log('Testing basic connectivity...');
+            fetch('/api/test')
+                .then(response => {
+                    if (response.ok) {
+                        log('✅ API connection successful!', 'success');
+                        return response.json();
+                    } else {
+                        log('❌ API responded with error: ' + response.status, 'error');
+                    }
+                })
+                .then(data => {
+                    if (data) {
+                        log('✅ Data received: ' + JSON.stringify(data).substring(0, 100) + '...', 'success');
+                    }
+                })
+                .catch(error => {
+                    log('❌ Network error: ' + error.message, 'error');
+                });
+        }, 1000);
+        
+        // Test 2: Dashboard API
+        setTimeout(() => {
+            log('Testing dashboard API...');
+            fetch('/api/dashboard/statistics')
+                .then(response => {
+                    if (response.ok) {
+                        log('✅ Dashboard API successful!', 'success');
+                    } else {
+                        log('❌ Dashboard API error: ' + response.status, 'error');
+                    }
+                })
+                .catch(error => {
+                    log('❌ Dashboard API failed: ' + error.message, 'error');
+                });
+        }, 2000);
+    </script>
+</body>
+</html>
