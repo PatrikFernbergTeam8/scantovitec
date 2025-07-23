@@ -1,15 +1,32 @@
-const API_BASE_URL = import.meta.env.PROD ? '/api' : 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.PROD ? 'https://scantovitec.vercel.app/api' : 'http://localhost:5000/api';
 
 class ApiService {
   async fetchWithErrorHandling(url) {
     try {
-      const response = await fetch(url);
+      console.log('Making API request to:', url);
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        mode: 'cors'
+      });
+      
+      console.log('Response status:', response.status);
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+      
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('Response error:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
       return await response.json();
     } catch (error) {
-      console.error('API Error:', error);
+      console.error('API Error details:', {
+        message: error.message,
+        url: url,
+        stack: error.stack
+      });
       throw error;
     }
   }

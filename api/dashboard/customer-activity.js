@@ -37,9 +37,16 @@ module.exports = async (req, res) => {
   ];
   
   const origin = req.headers.origin;
-  if (process.env.NODE_ENV === 'production' && allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  } else if (process.env.NODE_ENV !== 'production') {
+  console.log('Origin:', origin, 'NODE_ENV:', process.env.NODE_ENV);
+  
+  if (process.env.NODE_ENV === 'production') {
+    if (allowedOrigins.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+    } else {
+      // Fallback to allow all for now to debug iframe issues
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    }
+  } else {
     res.setHeader('Access-Control-Allow-Origin', '*');
   }
   
