@@ -46,16 +46,18 @@ class ApiService {
   async getScanningActivityRolling12Months(filters = {}) {
     // Calculate 12 months ago from current date
     const now = new Date();
-    const currentMonth = now.getMonth() + 1; // getMonth() returns 0-11
-    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1; // getMonth() returns 0-11 (July = 7)
+    const currentYear = now.getFullYear();   // 2025
     
-    // Calculate start date (12 months ago)
-    let startMonth = currentMonth + 1; // Next month from 12 months ago
-    let startYear = currentYear - 1;
+    // Calculate start date (11 months ago + current month = 12 months total)
+    // For July 2025, we want Aug 2024 to Jul 2025 (12 months)
+    let startMonth = currentMonth + 1; // 8 (August)
+    let startYear = currentYear - 1;   // 2024
     
+    // Handle year wrap-around for months after December
     if (startMonth > 12) {
-      startMonth = 1;
-      startYear++;
+      startMonth = startMonth - 12; // Convert to proper month
+      startYear = currentYear;       // Use current year
     }
     
     // Calculate end date (current month)
