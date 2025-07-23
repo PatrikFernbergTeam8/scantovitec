@@ -19,9 +19,9 @@ export function StatisticsChart({ color, chart, title, description, footer }) {
           {description}
         </Typography>
       </CardBody>
-      <CardHeader variant="filled" color="transparent" floated={false} shadow={false} className="bg-transparent flex-1 pt-2 min-h-0">
-        <div className="w-full h-full">
-          <Chart {...chart} />
+      <CardHeader variant="filled" color="transparent" floated={false} shadow={false} className="bg-transparent flex-1 pt-2 min-h-0" style={{ height: '100%' }}>
+        <div className="w-full h-full" style={{ height: 'calc(100% - 0.5rem)' }}>
+          <Chart {...chart} height="100%" />
         </div>
       </CardHeader>
       {footer && (
