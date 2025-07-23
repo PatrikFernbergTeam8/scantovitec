@@ -69,11 +69,25 @@ function buildFilterWhereClause(filters) {
 }
 
 module.exports = async (req, res) => {
-  // Set CORS headers
+  // Set CORS headers - Allow multiple origins for iframe support
+  const allowedOrigins = [
+    'https://scantovitec.vercel.app',
+    'https://playipp.se',
+    'https://www.playipp.se',
+    'https://app.playipp.se'
+  ];
+  
+  const origin = req.headers.origin;
+  if (process.env.NODE_ENV === 'production' && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else if (process.env.NODE_ENV !== 'production') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+  
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', process.env.NODE_ENV === 'production' ? 'https://scantovitec.vercel.app' : '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('X-Frame-Options', 'ALLOWALL');
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
