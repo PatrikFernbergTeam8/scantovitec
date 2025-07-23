@@ -1,49 +1,15 @@
-// More robust environment detection
-const isProduction = import.meta.env.PROD || import.meta.env.MODE === 'production' || window.location.hostname !== 'localhost';
-const API_BASE_URL = isProduction ? 'https://scantovitec.vercel.app/api' : 'http://localhost:5000/api';
-
-// Check if running in iframe
-const isInIframe = window !== window.top;
-const parentOrigin = isInIframe ? document.referrer : null;
-
-console.log('Environment info:', {
-  'import.meta.env.PROD': import.meta.env.PROD,
-  'import.meta.env.MODE': import.meta.env.MODE,
-  'window.location.hostname': window.location.hostname,
-  'window.location.href': window.location.href,
-  'isProduction': isProduction,
-  'isInIframe': isInIframe,
-  'parentOrigin': parentOrigin,
-  'API_BASE_URL': API_BASE_URL
-});
+const API_BASE_URL = import.meta.env.PROD ? '/api' : 'http://localhost:5000/api';
 
 class ApiService {
   async fetchWithErrorHandling(url) {
     try {
-      console.log('Making API request to:', url);
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        mode: 'cors'
-      });
-      
-      console.log('Response status:', response.status);
-      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-      
+      const response = await fetch(url);
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Response error:', errorText);
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       return await response.json();
     } catch (error) {
-      console.error('API Error details:', {
-        message: error.message,
-        url: url,
-        stack: error.stack
-      });
+      console.error('API Error:', error);
       throw error;
     }
   }
