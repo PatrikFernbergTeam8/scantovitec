@@ -77,20 +77,12 @@ class ApiService {
       lastDays: undefined
     };
     
-    // Debug logging
-    console.log('Rolling 12-month filters:', {
-      dateFrom: rollingFilters.dateFrom,
-      dateTo: rollingFilters.dateTo,
-      currentMonth,
-      currentYear,
-      startMonth,
-      startYear,
-      originalFilters: filters
-    });
-    
     const queryString = this.buildQueryString(rollingFilters);
-    console.log('Query string:', queryString);
-    return this.fetchWithErrorHandling(`${API_BASE_URL}/scanning-activity${queryString}`);
+    console.log('Rolling 12-month API call:', `${API_BASE_URL}/scanning-activity${queryString}`);
+    
+    const result = await this.fetchWithErrorHandling(`${API_BASE_URL}/scanning-activity${queryString}`);
+    console.log('API Response:', result);
+    return result;
   }
 
   // Get customers by city table data
