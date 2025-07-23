@@ -19,12 +19,35 @@ const config = {
 };
 
 let poolPromise;
+let cache = new Map();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 const getPool = async () => {
   if (!poolPromise) {
     poolPromise = sql.connect(config);
   }
   return poolPromise;
+};
+
+const getCacheKey = (filters) => {
+  return JSON.stringify(filters || {});
+};
+
+const getCachedData = (key) => {
+  const cached = cache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    return cached.data;
+  }
+  return null;
+};
+
+const setCachedData = (key, data) => {
+  cache.set(key, { data, timestamp: Date.now() });
+  // Clean up old cache entries
+  if (cache.size > 100) {
+    const oldestKey = cache.keys().next().value;
+    cache.delete(oldestKey);
+  }
 };
 
 // Helper function to build WHERE clause based on filters
@@ -86,9 +109,18 @@ module.exports = async function (context, req) {
   }
 
   try {
-    const pool = await getPool();
     const filters = req.query;
+    const cacheKey = getCacheKey(filters);
     
+    // Check cache first
+    const cachedResult = getCachedData(cacheKey);
+    if (cachedResult) {
+      context.res.status = 200;
+      context.res.body = cachedResult;
+      return;
+    }
+    
+    const pool = await getPool();
     const hasTimeFilters = filters.month || filters.year || filters.quarter || filters.week || filters.lastDays || (filters.dateFrom && filters.dateTo);
     
     // If no time filters, default to last 30 days for activity data
@@ -106,21 +138,12 @@ module.exports = async function (context, req) {
     const queries = await Promise.all([
       pool.request().query('SELECT COUNT(*) as totalKunder FROM Kunder WHERE Kedja = \'Länsfast\''),
       pool.request().query(`
-        SELECT COUNT(DISTINCT k.CrmID) as activeKunder 
+        SELECT 
+          COUNT(DISTINCT k.CrmID) as activeKunder,
+          COALESCE(SUM(l.AntalSidor), 0) as totalSidor,
+          COUNT(*) as totalScans
         FROM Kunder k 
         INNER JOIN Logs l ON k.CrmID = l.CrmID 
-        WHERE ${activityFilterCondition}
-      `),
-      pool.request().query(`
-        SELECT COALESCE(SUM(l.AntalSidor), 0) as totalSidor 
-        FROM Logs l 
-        INNER JOIN Kunder k ON l.CrmID = k.CrmID
-        WHERE ${activityFilterCondition}
-      `),
-      pool.request().query(`
-        SELECT COUNT(*) as totalScans 
-        FROM Logs l 
-        INNER JOIN Kunder k ON l.CrmID = k.CrmID
         WHERE ${activityFilterCondition}
       `)
     ]);
@@ -176,7 +199,7 @@ module.exports = async function (context, req) {
         color: "light-blue",
         icon: "DocumentTextIcon", 
         title: "Totalt Skannade Sidor",
-        value: `${queries[2].recordset[0].totalSidor || 0}`,
+        value: `${queries[1].recordset[0].totalSidor || 0}`,
         footer: {
           color: "text-green-500",
           value: footerText,
@@ -187,7 +210,7 @@ module.exports = async function (context, req) {
         color: "light-blue",
         icon: "ChartBarIcon",
         title: "Totalt Skannade Dokument",
-        value: queries[3].recordset[0].totalScans || 0,
+        value: queries[1].recordset[0].totalScans || 0,
         footer: {
           color: "text-green-500",
           value: footerText,
@@ -196,6 +219,9 @@ module.exports = async function (context, req) {
       }
     ];
 
+    // Cache the result
+    setCachedData(cacheKey, statistics);
+    
     context.res.status = 200;
     context.res.body = statistics;
   } catch (error) {
