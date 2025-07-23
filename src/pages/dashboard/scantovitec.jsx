@@ -118,7 +118,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
         // Fetch all dashboard data in parallel with filters
         const [statistics, scanningActivity, customersByCity, customerActivity, scanningEfficiency] = await Promise.all([
           ApiService.getStatistics(activeFilters),
-          ApiService.getScanningActivity(activeFilters),
+          ApiService.getScanningActivityRolling12Months(activeFilters),
           ApiService.getCustomersByCity(activeFilters),
           ApiService.getCustomerActivity(activeFilters),
           ApiService.getScanningEfficiency(activeFilters)

@@ -42,6 +42,43 @@ class ApiService {
     return this.fetchWithErrorHandling(`${API_BASE_URL}/scanning-activity${queryString}`);
   }
 
+  // Get scanning activity with rolling 12-month period
+  async getScanningActivityRolling12Months(filters = {}) {
+    // Calculate 12 months ago from current date
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1; // getMonth() returns 0-11
+    const currentYear = now.getFullYear();
+    
+    // Calculate start date (12 months ago)
+    let startMonth = currentMonth + 1; // Next month from 12 months ago
+    let startYear = currentYear - 1;
+    
+    if (startMonth > 12) {
+      startMonth = 1;
+      startYear++;
+    }
+    
+    // Calculate end date (current month)
+    const endMonth = currentMonth;
+    const endYear = currentYear;
+    
+    // Override date filters to force 12-month rolling window
+    const rollingFilters = {
+      ...filters,
+      dateFrom: `${startYear}-${String(startMonth).padStart(2, '0')}-01`,
+      dateTo: `${endYear}-${String(endMonth).padStart(2, '0')}-${new Date(endYear, endMonth, 0).getDate()}`,
+      // Remove conflicting date filters
+      month: undefined,
+      year: undefined,
+      quarter: undefined,
+      week: undefined,
+      lastDays: undefined
+    };
+    
+    const queryString = this.buildQueryString(rollingFilters);
+    return this.fetchWithErrorHandling(`${API_BASE_URL}/scanning-activity${queryString}`);
+  }
+
   // Get customers by city table data
   async getCustomersByCity(filters = {}) {
     const queryString = this.buildQueryString(filters);
