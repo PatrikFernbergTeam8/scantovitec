@@ -104,7 +104,7 @@ module.exports = async function (context, req) {
     }
     
     const queries = await Promise.all([
-      pool.request().query('SELECT COUNT(*) as totalKunder FROM Kunder WHERE Kedja = \\'Länsfast\\''),
+      pool.request().query('SELECT COUNT(*) as totalKunder FROM Kunder WHERE Kedja = \'Länsfast\''),
       pool.request().query(`
         SELECT COUNT(DISTINCT k.CrmID) as activeKunder 
         FROM Kunder k 
