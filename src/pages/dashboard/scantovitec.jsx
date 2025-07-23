@@ -595,9 +595,13 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
                                 <td className="p-[0.25rem] sm:p-[0.375rem] md:p-[0.5rem] text-xs text-blue-gray-600">{customer.totalSidor}</td>
                                 <td className="p-[0.25rem] sm:p-[0.375rem] md:p-[0.5rem] text-xs">
                                   <span className={`px-2 py-1 rounded-full text-xs ${
-                                    customer.status === 'Aktiv' 
-                                      ? 'bg-green-100 text-green-800' 
-                                      : 'bg-red-100 text-red-800'
+                                    customer.status === 'Mycket Aktiv' 
+                                      ? 'bg-green-200 text-green-900' 
+                                      : customer.status === 'Aktiv'
+                                        ? 'bg-green-100 text-green-800'
+                                        : customer.status === 'Mindre Aktiv'
+                                          ? 'bg-orange-100 text-orange-800'
+                                          : 'bg-red-100 text-red-800'
                                   }`}>
                                     {customer.status}
                                   </span>

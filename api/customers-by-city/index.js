@@ -101,8 +101,9 @@ module.exports = async function (context, req) {
         COUNT(CASE WHEN ${finalLogFilterCondition} THEN l.LogID END) as skannadeDokument,
         COALESCE(SUM(CASE WHEN ${finalLogFilterCondition} THEN l.AntalSidor ELSE 0 END), 0) as totalSidor,
         CASE 
-          WHEN COUNT(DISTINCT CASE WHEN l.LogDate >= DATEADD(day, -30, GETDATE()) THEN l.CrmID END) > 0 
-          THEN 'Aktiv' 
+          WHEN COUNT(CASE WHEN ${finalLogFilterCondition} THEN l.LogID END) >= 100 THEN 'Mycket Aktiv'
+          WHEN COUNT(CASE WHEN ${finalLogFilterCondition} THEN l.LogID END) >= 25 THEN 'Aktiv'
+          WHEN COUNT(CASE WHEN ${finalLogFilterCondition} THEN l.LogID END) >= 1 THEN 'Mindre Aktiv'
           ELSE 'Inaktiv' 
         END as status
       FROM Kunder k
