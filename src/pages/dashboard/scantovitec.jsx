@@ -564,7 +564,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
                 ? 'col-start-1 col-end-2 row-start-2 row-end-3' 
                 : item.title.includes('Batch-Scanning') 
                   ? 'col-start-2 col-end-3 row-start-2 row-end-3' 
-                  : item.title.includes('Mest Aktiva Kontor') 
+                  : (item.title.includes('Mest Aktiva Kontor') || item.title.includes('Lista med alla kontor'))
                     ? 'col-start-3 col-end-5 row-start-1 row-end-3' 
                     : 'col-start-1 col-end-3 row-start-1 row-end-2'
             }`}>
