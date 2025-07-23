@@ -85,8 +85,15 @@ module.exports = async function (context, req) {
       whereCondition += ` AND k.Ort = '${filters.city.replace(/'/g, "''")}'`;
     }
     
+    // Check if any filters are applied (excluding default conditions)
+    const hasFilters = filters.month || filters.year || filters.quarter || 
+                      filters.lastDays !== undefined || filters.volumeLevel || filters.city;
+    
+    // Use TOP 15 only if filters are applied, otherwise show all
+    const topClause = hasFilters ? 'TOP 15' : '';
+    
     const result = await pool.request().query(`
-      SELECT TOP 15
+      SELECT ${topClause}
         k.Ort as ort,
         COUNT(CASE WHEN ${logFilterCondition} THEN l.LogID END) as skannadeDokument,
         COALESCE(SUM(CASE WHEN ${logFilterCondition} THEN l.AntalSidor ELSE 0 END), 0) as totalSidor,
@@ -103,7 +110,7 @@ module.exports = async function (context, req) {
     `);
 
     // Determine title text based on active filters
-    let titleText = "Mest Aktiva Kontor Senaste 30 Dagarna"; // Default
+    let titleText = hasFilters ? "Mest Aktiva Kontor Senaste 30 Dagarna" : "Lista med alla kontor"; // Default
     
     if (filters.lastDays) {
       const days = parseInt(filters.lastDays);
