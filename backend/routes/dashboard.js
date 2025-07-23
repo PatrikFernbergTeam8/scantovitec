@@ -209,16 +209,21 @@ router.get('/scanning-activity', async (req, res) => {
     const pool = await getPool();
     const filters = req.query;
     
+    console.log('🔍 Scanning activity filters received:', filters);
+    
     // For chart data, we want to show trends, so use modified filter logic
     let whereCondition = "k.Kedja = 'Länsfast'";
     
     // Apply date range filters first (for rolling 12-month periods)
     if (filters.dateFrom && filters.dateTo) {
       whereCondition += ` AND l.LogDate >= '${filters.dateFrom}' AND l.LogDate <= '${filters.dateTo}'`;
+      console.log('📅 Using date range filter:', filters.dateFrom, 'to', filters.dateTo);
     } else if (filters.year) {
       whereCondition += ` AND YEAR(l.LogDate) = ${parseInt(filters.year)}`;
+      console.log('📅 Using year filter:', filters.year);
     } else {
       whereCondition += ` AND YEAR(l.LogDate) = YEAR(GETDATE())`;
+      console.log('📅 Using current year filter');
     }
     
     if (filters.city) {
@@ -235,7 +240,7 @@ router.get('/scanning-activity', async (req, res) => {
       }
     }
     
-    const result = await pool.request().query(`
+    const sqlQuery = `
       SELECT 
         CASE MONTH(l.LogDate)
           WHEN 1 THEN 'Jan'
@@ -259,10 +264,18 @@ router.get('/scanning-activity', async (req, res) => {
       WHERE ${whereCondition}
       GROUP BY YEAR(l.LogDate), MONTH(l.LogDate)
       ORDER BY YEAR(l.LogDate), MONTH(l.LogDate)
-    `);
+    `;
+    
+    console.log('🔍 SQL Query:', sqlQuery);
+    
+    const result = await pool.request().query(sqlQuery);
+    
+    console.log('📊 Raw SQL results:', result.recordset);
 
     const data = result.recordset.map(row => row.totalPages);
     const categories = result.recordset.map(row => row.month);
+    
+    console.log('📊 Final response data:', { data, categories });
 
     res.json({
       type: "bar",
