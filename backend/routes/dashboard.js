@@ -250,13 +250,15 @@ router.get('/scanning-activity', async (req, res) => {
           WHEN 10 THEN 'Okt'
           WHEN 11 THEN 'Nov'
           WHEN 12 THEN 'Dec'
-        END as month,
+        END + ' ' + RIGHT(CAST(YEAR(l.LogDate) AS VARCHAR), 2) as month,
+        YEAR(l.LogDate) as year,
+        MONTH(l.LogDate) as monthNum,
         COALESCE(SUM(l.AntalSidor), 0) as totalPages
       FROM Logs l 
       INNER JOIN Kunder k ON l.CrmID = k.CrmID
       WHERE ${whereCondition}
-      GROUP BY MONTH(l.LogDate)
-      ORDER BY MONTH(l.LogDate)
+      GROUP BY YEAR(l.LogDate), MONTH(l.LogDate)
+      ORDER BY YEAR(l.LogDate), MONTH(l.LogDate)
     `);
 
     const data = result.recordset.map(row => row.totalPages);
