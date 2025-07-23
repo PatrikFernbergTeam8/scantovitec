@@ -214,14 +214,14 @@ router.get('/scanning-activity', async (req, res) => {
     // For chart data, we want to show trends, so use modified filter logic
     let whereCondition = "k.Kedja = 'Länsfast'";
     
-    // Always show rolling 12-month period unless specific date range is provided
+    // Always show rolling 12-month period - ignore year filters for chart consistency
     if (filters.dateFrom && filters.dateTo) {
       whereCondition += ` AND l.LogDate >= '${filters.dateFrom}' AND l.LogDate <= '${filters.dateTo}'`;
       console.log('📅 Using date range filter:', filters.dateFrom, 'to', filters.dateTo);
     } else {
-      // Default to rolling 12-month period from today
-      whereCondition += ` AND l.LogDate >= DATEADD(month, -11, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))`;
-      console.log('📅 Using rolling 12-month period');
+      // Always default to rolling 12-month period from today, ignore other time filters
+      whereCondition += ` AND l.LogDate >= DATEADD(month, -11, DATEADD(month, DATEDIFF(month, 0, GETDATE()), 0))`;
+      console.log('📅 Using rolling 12-month period - ignoring year/month filters for consistency');
     }
     
     if (filters.city) {
@@ -242,8 +242,13 @@ router.get('/scanning-activity', async (req, res) => {
     const sqlQuery = `
       WITH MonthSeries AS (
         SELECT 
-          DATEADD(month, n, DATEADD(month, -11, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))) AS MonthStart,
-          CASE (MONTH(DATEADD(month, n, DATEADD(month, -11, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)))))
+          DATEADD(month, n - 11, DATEADD(month, DATEDIFF(month, 0, GETDATE()), 0)) AS MonthStart
+        FROM (VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11)) AS Numbers(n)
+      ),
+      MonthLabels AS (
+        SELECT 
+          MonthStart,
+          CASE MONTH(MonthStart)
             WHEN 1 THEN 'Jan'
             WHEN 2 THEN 'Feb'
             WHEN 3 THEN 'Mar'
@@ -256,10 +261,10 @@ router.get('/scanning-activity', async (req, res) => {
             WHEN 10 THEN 'Okt'
             WHEN 11 THEN 'Nov'
             WHEN 12 THEN 'Dec'
-          END + ' ' + RIGHT(CAST(YEAR(DATEADD(month, n, DATEADD(month, -11, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)))) AS VARCHAR), 2) as monthLabel,
-          YEAR(DATEADD(month, n, DATEADD(month, -11, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)))) as year,
-          MONTH(DATEADD(month, n, DATEADD(month, -11, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)))) as monthNum
-        FROM (VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11)) AS Numbers(n)
+          END + ' ' + RIGHT(CAST(YEAR(MonthStart) AS VARCHAR), 2) as monthLabel,
+          YEAR(MonthStart) as year,
+          MONTH(MonthStart) as monthNum
+        FROM MonthSeries
       ),
       ActualData AS (
         SELECT 
@@ -272,13 +277,13 @@ router.get('/scanning-activity', async (req, res) => {
         GROUP BY YEAR(l.LogDate), MONTH(l.LogDate)
       )
       SELECT 
-        ms.monthLabel as month,
-        ms.year,
-        ms.monthNum,
+        ml.monthLabel as month,
+        ml.year,
+        ml.monthNum,
         COALESCE(ad.totalPages, 0) as totalPages
-      FROM MonthSeries ms
-      LEFT JOIN ActualData ad ON ms.year = ad.year AND ms.monthNum = ad.monthNum
-      ORDER BY ms.year, ms.monthNum
+      FROM MonthLabels ml
+      LEFT JOIN ActualData ad ON ml.year = ad.year AND ml.monthNum = ad.monthNum
+      ORDER BY ml.year, ml.monthNum
     `;
     
     console.log('🔍 SQL Query:', sqlQuery);
