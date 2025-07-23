@@ -17,16 +17,16 @@ class ApiService {
   // Build query string from filters
   buildQueryString(filters) {
     const params = new URLSearchParams();
-    if (filters.month) params.append('month', filters.month);
-    if (filters.year) params.append('year', filters.year);
-    if (filters.quarter) params.append('quarter', filters.quarter);
-    if (filters.week) params.append('week', filters.week);
-    if (filters.lastDays) params.append('lastDays', filters.lastDays);
-    if (filters.dateFrom) params.append('dateFrom', filters.dateFrom);
-    if (filters.dateTo) params.append('dateTo', filters.dateTo);
-    if (filters.city) params.append('city', filters.city);
-    if (filters.volumeLevel) params.append('volumeLevel', filters.volumeLevel);
-    if (filters.customerActivity) params.append('customerActivity', filters.customerActivity);
+    if (filters.month !== undefined && filters.month !== null && filters.month !== '') params.append('month', filters.month);
+    if (filters.year !== undefined && filters.year !== null && filters.year !== '') params.append('year', filters.year);
+    if (filters.quarter !== undefined && filters.quarter !== null && filters.quarter !== '') params.append('quarter', filters.quarter);
+    if (filters.week !== undefined && filters.week !== null && filters.week !== '') params.append('week', filters.week);
+    if (filters.lastDays !== undefined && filters.lastDays !== null && filters.lastDays !== '') params.append('lastDays', filters.lastDays);
+    if (filters.dateFrom !== undefined && filters.dateFrom !== null && filters.dateFrom !== '') params.append('dateFrom', filters.dateFrom);
+    if (filters.dateTo !== undefined && filters.dateTo !== null && filters.dateTo !== '') params.append('dateTo', filters.dateTo);
+    if (filters.city !== undefined && filters.city !== null && filters.city !== '') params.append('city', filters.city);
+    if (filters.volumeLevel !== undefined && filters.volumeLevel !== null && filters.volumeLevel !== '') params.append('volumeLevel', filters.volumeLevel);
+    if (filters.customerActivity !== undefined && filters.customerActivity !== null && filters.customerActivity !== '') params.append('customerActivity', filters.customerActivity);
     return params.toString() ? `?${params.toString()}` : '';
   }
 
@@ -77,7 +77,19 @@ class ApiService {
       lastDays: undefined
     };
     
+    // Debug logging
+    console.log('Rolling 12-month filters:', {
+      dateFrom: rollingFilters.dateFrom,
+      dateTo: rollingFilters.dateTo,
+      currentMonth,
+      currentYear,
+      startMonth,
+      startYear,
+      originalFilters: filters
+    });
+    
     const queryString = this.buildQueryString(rollingFilters);
+    console.log('Query string:', queryString);
     return this.fetchWithErrorHandling(`${API_BASE_URL}/scanning-activity${queryString}`);
   }
 
