@@ -37,15 +37,30 @@ module.exports = async (req, res) => {
   ];
   
   const origin = req.headers.origin;
-  if (process.env.NODE_ENV === 'production' && allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Credentials', true);
-  } else if (process.env.NODE_ENV !== 'production') {
+  const userAgent = req.headers['user-agent'] || '';
+  const referer = req.headers.referer || '';
+  
+  // Check if request is from Android WebView
+  const isWebView = userAgent.includes('Version/4.0') && userAgent.includes('Chrome/');
+  const isPlayippWebView = userAgent.includes('PLWebViewDefault') || userAgent.includes('Version/4.0');
+  
+  if (process.env.NODE_ENV === 'production') {
+    if (allowedOrigins.includes(origin)) {
+      // Standard CORS for web browsers
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Credentials', true);
+    } else if (isPlayippWebView || !origin) {
+      // Handle WebView requests that may not send proper origin headers
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Credentials', false);
+    } else {
+      // Fallback to main domain
+      res.setHeader('Access-Control-Allow-Origin', 'https://scantovitec.vercel.app');
+      res.setHeader('Access-Control-Allow-Credentials', true);
+    }
+  } else {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Credentials', false);
-  } else {
-    res.setHeader('Access-Control-Allow-Origin', 'https://scantovitec.vercel.app');
-    res.setHeader('Access-Control-Allow-Credentials', true);
   }
   
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
