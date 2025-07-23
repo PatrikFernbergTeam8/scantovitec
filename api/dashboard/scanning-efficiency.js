@@ -27,47 +27,20 @@ const getPool = async () => {
   return poolPromise;
 };
 
-module.exports = async (req, res) => {
-  // Set CORS headers with iframe support
-  const allowedOrigins = [
-    'https://scantovitec.vercel.app',
-    'https://playipp.se',
-    'https://www.playipp.se',
-    'https://app.playipp.se'
-  ];
-  
-  const origin = req.headers.origin;
-  const userAgent = req.headers['user-agent'] || '';
-  const referer = req.headers.referer || '';
-  
-  // Check if request is from Android WebView
-  const isWebView = userAgent.includes('Version/4.0') && userAgent.includes('Chrome/');
-  const isPlayippWebView = userAgent.includes('PLWebViewDefault') || userAgent.includes('Version/4.0');
-  
-  if (process.env.NODE_ENV === 'production') {
-    if (allowedOrigins.includes(origin)) {
-      // Standard CORS for web browsers
-      res.setHeader('Access-Control-Allow-Origin', origin);
-      res.setHeader('Access-Control-Allow-Credentials', true);
-    } else if (isPlayippWebView || !origin) {
-      // Handle WebView requests that may not send proper origin headers
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Credentials', false);
-    } else {
-      // Fallback to main domain
-      res.setHeader('Access-Control-Allow-Origin', 'https://scantovitec.vercel.app');
-      res.setHeader('Access-Control-Allow-Credentials', true);
+module.exports = async function (context, req) {
+  // Set CORS headers
+  context.res = {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+      'Access-Control-Allow-Headers': '*',
+      'Content-Type': 'application/json'
     }
-  } else {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Credentials', false);
-  }
+  };
   
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
+    context.res.status = 200;
+    context.res.body = '';
     return;
   }
 
@@ -149,7 +122,8 @@ module.exports = async (req, res) => {
     const totalScans = result.recordset[0].total_scans || 1;
     const singleScans = totalScans - batchScans;
 
-    res.json({
+    context.res.status = 200;
+    context.res.body = {
       type: "donut",
       height: 200,
       series: [efficiency, 100 - efficiency],
@@ -158,9 +132,10 @@ module.exports = async (req, res) => {
       batchScans,
       singleScans,
       totalScans
-    });
+    };
   } catch (error) {
-    console.error('Error fetching scanning efficiency:', error);
-    res.status(500).json({ error: 'Failed to fetch scanning efficiency' });
+    context.log.error('Error fetching scanning efficiency:', error);
+    context.res.status = 500;
+    context.res.body = { error: 'Failed to fetch scanning efficiency' };
   }
 };

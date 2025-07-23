@@ -1,19 +1,24 @@
-module.exports = async (req, res) => {
-  // Very permissive CORS for testing
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', '*');
-  res.setHeader('X-Frame-Options', 'ALLOWALL');
+module.exports = async function (context, req) {
+  // Set CORS headers
+  context.res = {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+      'Access-Control-Allow-Headers': '*',
+      'Content-Type': 'application/json'
+    }
+  };
   
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
+    context.res.status = 200;
+    context.res.body = '';
     return;
   }
 
   // Simple test response with debug info
   const response = {
     success: true,
-    message: 'PLAYipp connectivity test successful!',
+    message: 'Azure API test successful!',
     timestamp: new Date().toISOString(),
     headers: req.headers,
     method: req.method,
@@ -23,7 +28,8 @@ module.exports = async (req, res) => {
     referer: req.headers.referer || 'Not provided'
   };
 
-  console.log('Test endpoint accessed:', response);
+  context.log('Test endpoint accessed:', response);
   
-  res.status(200).json(response);
+  context.res.status = 200;
+  context.res.body = response;
 };
