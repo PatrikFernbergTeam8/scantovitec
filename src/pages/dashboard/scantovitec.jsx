@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Typography, Card, CardHeader, CardBody, Button, Menu, MenuHandler, MenuList, MenuItem } from "@material-tailwind/react";
 import { StatisticsCard } from "@/widgets/cards";
 import { StatisticsChart } from "@/widgets/charts";
-import { FilterBar } from "@/components/FilterBar";
 import { statisticsCardsData } from "@/data";
 import { 
   BuildingOfficeIcon, 
