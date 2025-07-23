@@ -1,4 +1,21 @@
-const API_BASE_URL = import.meta.env.PROD ? 'https://scantovitec.vercel.app/api' : 'http://localhost:5000/api';
+// More robust environment detection
+const isProduction = import.meta.env.PROD || import.meta.env.MODE === 'production' || window.location.hostname !== 'localhost';
+const API_BASE_URL = isProduction ? 'https://scantovitec.vercel.app/api' : 'http://localhost:5000/api';
+
+// Check if running in iframe
+const isInIframe = window !== window.top;
+const parentOrigin = isInIframe ? document.referrer : null;
+
+console.log('Environment info:', {
+  'import.meta.env.PROD': import.meta.env.PROD,
+  'import.meta.env.MODE': import.meta.env.MODE,
+  'window.location.hostname': window.location.hostname,
+  'window.location.href': window.location.href,
+  'isProduction': isProduction,
+  'isInIframe': isInIframe,
+  'parentOrigin': parentOrigin,
+  'API_BASE_URL': API_BASE_URL
+});
 
 class ApiService {
   async fetchWithErrorHandling(url) {
