@@ -19,8 +19,10 @@ export function StatisticsChart({ color, chart, title, description, footer }) {
           {description}
         </Typography>
       </CardBody>
-      <CardHeader variant="filled" color="transparent" floated={false} shadow={false} className="bg-transparent flex-1 pt-2 h-32 sm:h-40 md:h-48 lg:h-56">
-        <Chart {...chart} />
+      <CardHeader variant="filled" color="transparent" floated={false} shadow={false} className="bg-transparent flex-1 pt-2 min-h-0">
+        <div className="w-full h-full">
+          <Chart {...chart} />
+        </div>
       </CardHeader>
       {footer && (
         <CardFooter className="px-[0.75rem] py-[0.5rem] sm:px-[1rem] sm:py-[0.75rem] md:px-[1.5rem] md:py-[1.25rem] bg-gray-50/30">
