@@ -8,7 +8,7 @@ const config = {
   port: parseInt(process.env.DB_PORT) || 1433,
   options: {
     encrypt: true,
-    trustServerCertificate: false,
+    trustServerCertificate: true,
     enableArithAbort: true,
   },
   pool: {
@@ -200,7 +200,17 @@ module.exports = async function (context, req) {
     context.res.body = statistics;
   } catch (error) {
     context.log.error('Error fetching statistics:', error);
+    context.log.error('DB Config:', {
+      server: process.env.DB_SERVER,
+      database: process.env.DB_DATABASE,
+      user: process.env.DB_USER,
+      hasPassword: !!process.env.DB_PASSWORD
+    });
     context.res.status = 500;
-    context.res.body = { error: 'Failed to fetch statistics' };
+    context.res.body = { 
+      error: 'Failed to fetch statistics',
+      details: error.message,
+      code: error.code
+    };
   }
 };
