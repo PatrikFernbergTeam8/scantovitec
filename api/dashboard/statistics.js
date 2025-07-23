@@ -69,9 +69,26 @@ function buildFilterWhereClause(filters) {
 }
 
 module.exports = async (req, res) => {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', process.env.NODE_ENV === 'production' ? 'https://scantovitec.vercel.app' : '*');
+  // Set CORS headers with iframe support
+  const allowedOrigins = [
+    'https://scantovitec.vercel.app',
+    'https://playipp.se',
+    'https://www.playipp.se',
+    'https://app.playipp.se'
+  ];
+  
+  const origin = req.headers.origin;
+  if (process.env.NODE_ENV === 'production' && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', true);
+  } else if (process.env.NODE_ENV !== 'production') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Credentials', false);
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', 'https://scantovitec.vercel.app');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+  }
+  
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
