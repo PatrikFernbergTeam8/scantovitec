@@ -212,8 +212,10 @@ router.get('/scanning-activity', async (req, res) => {
     // For chart data, we want to show trends, so use modified filter logic
     let whereCondition = "k.Kedja = 'Länsfast'";
     
-    // Apply filters but maintain chart grouping logic
-    if (filters.year) {
+    // Apply date range filters first (for rolling 12-month periods)
+    if (filters.dateFrom && filters.dateTo) {
+      whereCondition += ` AND l.LogDate >= '${filters.dateFrom}' AND l.LogDate <= '${filters.dateTo}'`;
+    } else if (filters.year) {
       whereCondition += ` AND YEAR(l.LogDate) = ${parseInt(filters.year)}`;
     } else {
       whereCondition += ` AND YEAR(l.LogDate) = YEAR(GETDATE())`;
