@@ -214,16 +214,14 @@ router.get('/scanning-activity', async (req, res) => {
     // For chart data, we want to show trends, so use modified filter logic
     let whereCondition = "k.Kedja = 'Länsfast'";
     
-    // Apply date range filters first (for rolling 12-month periods)
+    // Always show rolling 12-month period unless specific date range is provided
     if (filters.dateFrom && filters.dateTo) {
       whereCondition += ` AND l.LogDate >= '${filters.dateFrom}' AND l.LogDate <= '${filters.dateTo}'`;
       console.log('📅 Using date range filter:', filters.dateFrom, 'to', filters.dateTo);
-    } else if (filters.year) {
-      whereCondition += ` AND YEAR(l.LogDate) = ${parseInt(filters.year)}`;
-      console.log('📅 Using year filter:', filters.year);
     } else {
-      whereCondition += ` AND YEAR(l.LogDate) = YEAR(GETDATE())`;
-      console.log('📅 Using current year filter');
+      // Default to rolling 12-month period from today
+      whereCondition += ` AND l.LogDate >= DATEADD(month, -11, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))`;
+      console.log('📅 Using rolling 12-month period');
     }
     
     if (filters.city) {
@@ -240,30 +238,47 @@ router.get('/scanning-activity', async (req, res) => {
       }
     }
     
+    // Generate all 12 months for the rolling period and left join with actual data
     const sqlQuery = `
+      WITH MonthSeries AS (
+        SELECT 
+          DATEADD(month, n, DATEADD(month, -11, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))) AS MonthStart,
+          CASE (MONTH(DATEADD(month, n, DATEADD(month, -11, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)))))
+            WHEN 1 THEN 'Jan'
+            WHEN 2 THEN 'Feb'
+            WHEN 3 THEN 'Mar'
+            WHEN 4 THEN 'Apr'
+            WHEN 5 THEN 'Maj'
+            WHEN 6 THEN 'Jun'
+            WHEN 7 THEN 'Jul'
+            WHEN 8 THEN 'Aug'
+            WHEN 9 THEN 'Sep'
+            WHEN 10 THEN 'Okt'
+            WHEN 11 THEN 'Nov'
+            WHEN 12 THEN 'Dec'
+          END + ' ' + RIGHT(CAST(YEAR(DATEADD(month, n, DATEADD(month, -11, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)))) AS VARCHAR), 2) as monthLabel,
+          YEAR(DATEADD(month, n, DATEADD(month, -11, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)))) as year,
+          MONTH(DATEADD(month, n, DATEADD(month, -11, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)))) as monthNum
+        FROM (VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11)) AS Numbers(n)
+      ),
+      ActualData AS (
+        SELECT 
+          YEAR(l.LogDate) as year,
+          MONTH(l.LogDate) as monthNum,
+          COALESCE(SUM(l.AntalSidor), 0) as totalPages
+        FROM Logs l 
+        INNER JOIN Kunder k ON l.CrmID = k.CrmID
+        WHERE ${whereCondition}
+        GROUP BY YEAR(l.LogDate), MONTH(l.LogDate)
+      )
       SELECT 
-        CASE MONTH(l.LogDate)
-          WHEN 1 THEN 'Jan'
-          WHEN 2 THEN 'Feb'
-          WHEN 3 THEN 'Mar'
-          WHEN 4 THEN 'Apr'
-          WHEN 5 THEN 'Maj'
-          WHEN 6 THEN 'Jun'
-          WHEN 7 THEN 'Jul'
-          WHEN 8 THEN 'Aug'
-          WHEN 9 THEN 'Sep'
-          WHEN 10 THEN 'Okt'
-          WHEN 11 THEN 'Nov'
-          WHEN 12 THEN 'Dec'
-        END + ' ' + RIGHT(CAST(YEAR(l.LogDate) AS VARCHAR), 2) as month,
-        YEAR(l.LogDate) as year,
-        MONTH(l.LogDate) as monthNum,
-        COALESCE(SUM(l.AntalSidor), 0) as totalPages
-      FROM Logs l 
-      INNER JOIN Kunder k ON l.CrmID = k.CrmID
-      WHERE ${whereCondition}
-      GROUP BY YEAR(l.LogDate), MONTH(l.LogDate)
-      ORDER BY YEAR(l.LogDate), MONTH(l.LogDate)
+        ms.monthLabel as month,
+        ms.year,
+        ms.monthNum,
+        COALESCE(ad.totalPages, 0) as totalPages
+      FROM MonthSeries ms
+      LEFT JOIN ActualData ad ON ms.year = ad.year AND ms.monthNum = ad.monthNum
+      ORDER BY ms.year, ms.monthNum
     `;
     
     console.log('🔍 SQL Query:', sqlQuery);
