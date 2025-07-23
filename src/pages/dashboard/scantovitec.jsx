@@ -558,19 +558,19 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
         <div className="flex-1 overflow-hidden px-[0.5rem] sm:px-[0.75rem] md:px-[1rem] pb-[0.5rem] sm:pb-[0.75rem] md:pb-[1rem]">
           <div className="grid gap-[0.25rem] sm:gap-[0.5rem] md:gap-[0.75rem] 
                           grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 
-                          grid-rows-2 h-full">
+                          auto-rows-min">
         {chartsData.map((item, index) => (
             <div key={index} className={`${
               item.title.includes('Kundaktivitet') 
-                ? 'col-start-1 col-end-2 row-start-2 row-end-3' 
+                ? 'md:col-span-1' 
                 : item.title.includes('Batch-Scanning') 
-                  ? 'col-start-2 col-end-3 row-start-2 row-end-3' 
+                  ? 'md:col-span-1' 
                   : item.title.includes('Mest Aktiva Kontor') 
-                    ? 'col-start-3 col-end-5 row-start-1 row-end-3' 
-                    : 'col-start-1 col-end-3 row-start-1 row-end-2'
+                    ? 'md:col-span-2' 
+                    : 'md:col-span-2'
             }`}>
                 {item.type === 'table' ? (
-                  <Card className="shadow-lg shadow-gray-500/40 border-0 bg-white h-full flex flex-col drop-shadow-lg">
+                  <Card className="shadow-lg shadow-gray-500/40 border-0 bg-white max-h-80 flex flex-col drop-shadow-lg">
                     <CardHeader variant="gradient" color="white" floated={false} shadow={false} className="p-[0.5rem] sm:p-[0.75rem] md:p-[1rem]">
                       <Typography variant="h6" color="blue-gray" className="text-sm sm:text-base">
                         {item.title}
