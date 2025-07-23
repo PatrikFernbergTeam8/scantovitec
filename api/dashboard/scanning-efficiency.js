@@ -85,7 +85,7 @@ module.exports = async (req, res) => {
           l.AntalSidor,
           LAG(l.LogDate) OVER (PARTITION BY l.CrmID ORDER BY l.LogDate) as PrevLogDate,
           CASE 
-            WHEN DATEDIFF(minute, LAG(l.LogDate) OVER (PARTITION BY l.CrmID ORDER BY l.LogDate), l.LogDate) <= 15 
+            WHEN DATEDIFF(minute, LAG(l.LogDate) OVER (PARTITION BY l.CrmID ORDER BY l.LogDate), l.LogDate) <= 5 
             THEN 1 
             ELSE 0 
           END as IsBatch

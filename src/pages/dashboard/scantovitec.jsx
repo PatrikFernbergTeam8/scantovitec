@@ -209,7 +209,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
           {
             color: "white",
             title: "Batch-Scanning Effektivitet",
-            description: "Andel scanningar i batch (inom 15 min)",
+            description: "Andel scanningar i batch (inom 5 min)",
             chart: {
               ...scanningEfficiency,
               options: {
