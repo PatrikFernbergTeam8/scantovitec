@@ -209,7 +209,7 @@ router.get('/scanning-activity', async (req, res) => {
     const pool = await getPool();
     const filters = req.query;
     
-    console.log('🔍 Scanning activity filters received:', filters);
+    console.log('🔍 DEBUG: Scanning activity filters received:', JSON.stringify(filters, null, 2));
     
     // For chart data, we want to show trends, so use modified filter logic
     let whereCondition = "k.Kedja = 'Länsfast'";
@@ -217,11 +217,12 @@ router.get('/scanning-activity', async (req, res) => {
     // Always show rolling 12-month period - ignore year filters for chart consistency
     if (filters.dateFrom && filters.dateTo) {
       whereCondition += ` AND l.LogDate >= '${filters.dateFrom}' AND l.LogDate <= '${filters.dateTo}'`;
-      console.log('📅 Using date range filter:', filters.dateFrom, 'to', filters.dateTo);
+      console.log('📅 DEBUG: Using date range filter:', filters.dateFrom, 'to', filters.dateTo);
     } else {
       // Always default to rolling 12-month period from today, ignore other time filters
       whereCondition += ` AND l.LogDate >= DATEADD(month, -11, DATEADD(month, DATEDIFF(month, 0, GETDATE()), 0))`;
-      console.log('📅 Using rolling 12-month period - ignoring year/month filters for consistency');
+      console.log('📅 DEBUG: Using rolling 12-month period - ignoring year/month filters for consistency');
+      console.log('📅 DEBUG: Final whereCondition:', whereCondition);
     }
     
     if (filters.city) {
@@ -238,6 +239,18 @@ router.get('/scanning-activity', async (req, res) => {
       }
     }
     
+    // First, let's test what the date calculation gives us
+    const debugDateQuery = `
+      SELECT 
+        GETDATE() as currentDate,
+        DATEADD(month, DATEDIFF(month, 0, GETDATE()), 0) as currentMonthStart,
+        DATEADD(month, -11, DATEADD(month, DATEDIFF(month, 0, GETDATE()), 0)) as startDate
+    `;
+    
+    console.log('🔍 DEBUG: Testing date calculation query:', debugDateQuery);
+    const dateTest = await pool.request().query(debugDateQuery);
+    console.log('📅 DEBUG: Date calculation results:', dateTest.recordset[0]);
+
     // Generate all 12 months for the rolling period and left join with actual data
     const sqlQuery = `
       WITH MonthSeries AS (
@@ -280,24 +293,29 @@ router.get('/scanning-activity', async (req, res) => {
         ml.monthLabel as month,
         ml.year,
         ml.monthNum,
+        ml.MonthStart,
         COALESCE(ad.totalPages, 0) as totalPages
       FROM MonthLabels ml
       LEFT JOIN ActualData ad ON ml.year = ad.year AND ml.monthNum = ad.monthNum
       ORDER BY ml.year, ml.monthNum
     `;
     
-    console.log('🔍 SQL Query:', sqlQuery);
+    console.log('🔍 DEBUG: Full SQL Query:', sqlQuery);
     
     const result = await pool.request().query(sqlQuery);
     
-    console.log('📊 Raw SQL results:', result.recordset);
+    console.log('📊 DEBUG: Raw SQL results with dates:', JSON.stringify(result.recordset, null, 2));
 
     const data = result.recordset.map(row => row.totalPages);
     const categories = result.recordset.map(row => row.month);
     
-    console.log('📊 Final response data:', { data, categories });
+    console.log('📊 DEBUG: Final response data:', { data, categories });
+    console.log('📊 DEBUG: Data array length:', data.length);
+    console.log('📊 DEBUG: Categories array length:', categories.length);
+    console.log('📊 DEBUG: Data values:', data);
+    console.log('📊 DEBUG: Category values:', categories);
 
-    res.json({
+    const responseData = {
       type: "bar",
       height: 200,
       series: [{
@@ -305,7 +323,11 @@ router.get('/scanning-activity', async (req, res) => {
         data: data
       }],
       categories: categories
-    });
+    };
+
+    console.log('📊 DEBUG: Complete response object:', JSON.stringify(responseData, null, 2));
+
+    res.json(responseData);
   } catch (error) {
     console.error('Error fetching scanning activity:', error);
     res.status(500).json({ error: 'Failed to fetch scanning activity' });
