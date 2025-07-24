@@ -312,7 +312,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
             <img 
               src="/img/LF_Logo.png" 
               alt="Logo" 
-              className="h-[4.5rem] sm:h-[5rem] lg:h-[5.5rem] w-auto object-contain"
+              className="h-[5.5rem] sm:h-[6rem] lg:h-[6.5rem] w-auto object-contain"
             />
           </div>
 
