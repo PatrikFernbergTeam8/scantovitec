@@ -172,8 +172,13 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
                 colors: ["#4ade80", "#86efac", "#fed7aa", "#fecaca"],
                 legend: { 
                   show: true,
-                  position: "bottom",
+                  position: "right",
                   fontSize: "12px",
+                  offsetY: 0,
+                  itemMargin: {
+                    horizontal: 5,
+                    vertical: 8
+                  },
                   markers: {
                     width: 8,
                     height: 8
