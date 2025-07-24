@@ -559,9 +559,9 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
       {/* Main Content Area */}
       <div className="flex-1 overflow-hidden flex flex-col">
         {/* Statistics Cards - Compact responsive grid */}
-        <div className="flex-shrink-0 grid gap-[0.4%] sm:gap-[0.6%] md:gap-[0.8%] 
+        <div className="flex-shrink-0 grid gap-[0.6%] sm:gap-[0.6%] md:gap-[0.6%] 
                           grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4
-                          px-[1%] sm:px-[1.2%] md:px-[1.5%] pt-[2vh] sm:pt-[2.5vh] md:pt-[3vh] pb-[0.5vh] sm:pb-[0.8vh] md:pb-[1vh]">
+                          px-[1%] sm:px-[1.2%] md:px-[1.5%] pt-[2vh] sm:pt-[2.5vh] md:pt-[3vh] pb-[0.6vh] sm:pb-[0.6vh] md:pb-[0.6vh]">
         {statisticsData.map((item) => (
           <StatisticsCard
             key={item.title}
@@ -582,8 +582,8 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
       </div>
       
         {/* Charts Grid - Takes remaining space */}
-        <div className="flex-1 overflow-hidden px-[1%] sm:px-[1.2%] md:px-[1.5%] pb-[1vh] sm:pb-[1.2vh] md:pb-[1.5vh]">
-          <div className="grid gap-[0.4%] sm:gap-[0.6%] md:gap-[0.8%] 
+        <div className="flex-1 overflow-hidden px-[1%] sm:px-[1.2%] md:px-[1.5%] pb-[1vh] sm:pb-[1vh] md:pb-[1vh]">
+          <div className="grid gap-[0.6%] sm:gap-[0.6%] md:gap-[0.6%] 
                           grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 
                           grid-rows-2 h-full">
         {chartsData.map((item, index) => (

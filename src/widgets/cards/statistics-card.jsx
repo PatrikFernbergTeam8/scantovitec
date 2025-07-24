@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 export function StatisticsCard({ color, icon, title, value, footer }) {
   return (
     <Card className="shadow-lg shadow-gray-500/40 border-0 bg-white drop-shadow-lg">
-      <CardBody className="p-[2%] sm:p-[2.2%] md:p-[2.5%] text-left flex items-start gap-[1.5%]">
+      <CardBody className="p-[2%] sm:p-[2.2%] md:p-[2.5%] text-left flex items-start gap-[0.6%]">
         <div className="flex-shrink-0">
           {icon}
         </div>
