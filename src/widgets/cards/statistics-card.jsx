@@ -18,8 +18,8 @@ export function StatisticsCard({ color, icon, title, value, footer }) {
           <Typography variant="small" className="font-normal text-blue-gray-600">
             {title}
           </Typography>
-          <Typography variant="h3" color="blue-gray" className="sm:text-3xl md:text-4xl">
-            {value}
+          <Typography variant="h4" color="blue-gray" className="sm:text-xl md:text-2xl">
+            {typeof value === 'number' ? value.toLocaleString('sv-SE').replace(/,/g, ' ') : value}
           </Typography>
         </div>
       </CardBody>
