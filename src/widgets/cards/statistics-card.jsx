@@ -19,7 +19,7 @@ export function StatisticsCard({ color, icon, title, value, footer }) {
             {title}
           </Typography>
           <Typography variant="h4" color="blue-gray" className="sm:text-xl md:text-2xl">
-            {typeof value === 'number' ? value.toLocaleString('sv-SE').replace(/,/g, ' ') : value}
+            {typeof value === 'number' ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : value}
           </Typography>
         </div>
       </CardBody>
