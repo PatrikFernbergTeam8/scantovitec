@@ -11,11 +11,11 @@ import Chart from "react-apexcharts";
 export function StatisticsChart({ color, chart, title, description, footer }) {
   return (
     <Card className="shadow-lg shadow-gray-500/40 border-0 bg-white h-full flex flex-col drop-shadow-lg">
-      <CardBody className="px-[1rem] py-[0.5rem] sm:px-[1.25rem] sm:py-[0.625rem] md:px-[1.5rem] md:py-[0.75rem] pb-0">
-        <Typography variant="h6" color="blue-gray" className="text-sm">
+      <CardBody className="px-[2%] py-[1%] sm:px-[2.2%] sm:py-[1.1%] md:px-[2.5%] md:py-[1.2%] pb-0">
+        <Typography variant="h6" color="blue-gray" className="text-[calc(0.8rem+0.3vw)]">
           {title}
         </Typography>
-        <Typography variant="small" className="font-normal text-blue-gray-600 text-xs">
+        <Typography variant="small" className="font-normal text-blue-gray-600 text-[calc(0.7rem+0.2vw)]">
           {description}
         </Typography>
       </CardBody>
@@ -25,7 +25,7 @@ export function StatisticsChart({ color, chart, title, description, footer }) {
         </div>
       </CardHeader>
       {footer && (
-        <CardFooter className="px-[1.25rem] py-[0.75rem] sm:px-[1.5rem] sm:py-[1rem] md:px-[2rem] md:py-[1.75rem] bg-gray-50/30">
+        <CardFooter className="px-[2.2%] py-[1.2%] sm:px-[2.5%] sm:py-[1.5%] md:px-[3%] md:py-[2%] bg-gray-50/30">
           {footer}
         </CardFooter>
       )}

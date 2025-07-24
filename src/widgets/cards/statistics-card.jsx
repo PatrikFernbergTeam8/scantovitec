@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 export function StatisticsCard({ color, icon, title, value, footer }) {
   return (
     <Card className="shadow-lg shadow-gray-500/40 border-0 bg-white drop-shadow-lg">
-      <CardBody className="p-[1.5rem] sm:p-[1.75rem] md:p-[2rem] text-left flex items-start gap-6">
+      <CardBody className="p-[2%] sm:p-[2.2%] md:p-[2.5%] text-left flex items-start gap-[1.5%]">
         <div className="flex-shrink-0">
           {icon}
         </div>
@@ -18,7 +18,7 @@ export function StatisticsCard({ color, icon, title, value, footer }) {
           <Typography variant="small" className="font-normal text-blue-gray-600">
             {title}
           </Typography>
-          <Typography variant="h4" color="blue-gray" className="sm:text-xl md:text-2xl">
+          <Typography variant="h4" color="blue-gray" className="text-[calc(1rem+0.5vw)] sm:text-[calc(1.2rem+0.6vw)] md:text-[calc(1.4rem+0.7vw)]">
             {(() => {
               const numValue = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.-]/g, '')) : value;
               return !isNaN(numValue) && isFinite(numValue) ? 
@@ -29,7 +29,7 @@ export function StatisticsCard({ color, icon, title, value, footer }) {
         </div>
       </CardBody>
       {footer && (
-        <CardFooter className="p-[1.5rem] sm:p-[1.75rem] md:p-[2rem] bg-gray-50/30">
+        <CardFooter className="p-[2%] sm:p-[2.2%] md:p-[2.5%] bg-gray-50/30">
           {footer}
         </CardFooter>
       )}
