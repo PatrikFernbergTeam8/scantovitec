@@ -531,7 +531,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
       {/* Main Content Area */}
       <div className="flex-1 overflow-hidden flex flex-col">
         {/* Statistics Cards - Compact responsive grid */}
-        <div className="flex-shrink-0 grid gap-[0.75rem] sm:gap-[1rem] md:gap-[1.25rem] 
+        <div className="flex-shrink-0 grid gap-[0.25rem] sm:gap-[0.5rem] md:gap-[0.75rem] 
                           grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4
                           px-[1rem] sm:px-[1.25rem] md:px-[1.75rem] pt-[1rem] sm:pt-[1.25rem] md:pt-[1.5rem] pb-[1rem] sm:pb-[1.25rem] md:pb-[1.5rem]">
         {statisticsData.map((item) => (
