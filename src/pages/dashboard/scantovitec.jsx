@@ -211,6 +211,18 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
                   }
                 },
                 stroke: { width: 2, colors: ["#fff"] },
+                fill: {
+                  type: "gradient",
+                  gradient: {
+                    shade: "light",
+                    type: "horizontal",
+                    shadeIntensity: 0.25,
+                    gradientToColors: ["#66bb6a", "#a3d9a5", "#ffcc80", "#ffab91"],
+                    inverseColors: false,
+                    opacityFrom: 1,
+                    opacityTo: 1,
+                  }
+                },
                 tooltip: {
                   y: {
                     formatter: function(val) {
