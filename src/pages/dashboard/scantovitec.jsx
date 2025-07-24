@@ -558,10 +558,11 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-hidden flex flex-col">
-        {/* Statistics Cards - Compact responsive grid */}
+        {/* Statistics Cards - Double height section */}
         <div className="flex-shrink-0 grid gap-[0.6%] sm:gap-[0.6%] md:gap-[0.6%] 
                           grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4
-                          px-[0.6%] sm:px-[0.6%] md:px-[0.6%] pt-[0.6%] sm:pt-[0.6%] md:pt-[0.6%] pb-[0.6%] sm:pb-[0.6%] md:pb-[0.6%]">
+                          px-[0.6%] sm:px-[0.6%] md:px-[0.6%] pt-[0.6%] sm:pt-[0.6%] md:pt-[0.6%] pb-[0.6%] sm:pb-[0.6%] md:pb-[0.6%]
+                          h-[25vh] sm:h-[25vh] md:h-[25vh]">
         {statisticsData.map((item) => (
           <StatisticsCard
             key={item.title}
