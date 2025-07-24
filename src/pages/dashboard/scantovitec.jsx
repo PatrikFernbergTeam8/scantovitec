@@ -177,7 +177,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
                   offsetY: 0,
                   itemMargin: {
                     horizontal: 5,
-                    vertical: 8
+                    vertical: 3
                   },
                   markers: {
                     width: 8,
