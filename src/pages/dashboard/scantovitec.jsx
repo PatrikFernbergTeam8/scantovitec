@@ -182,7 +182,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
                 plotOptions: {
                   pie: {
                     donut: {
-                      size: "60%",
+                      size: "85%",
                       labels: {
                         show: true,
                         total: {
