@@ -334,7 +334,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
     <div className="h-screen w-full overflow-hidden flex flex-col bg-gradient-to-br from-blue-50/70 to-white">
       {/* Header with Logo and Filters */}
       <div className="flex-shrink-0">
-        <div className="flex items-center justify-between px-[1%] sm:px-[2%] py-[1.5vh] sm:py-[2vh]">
+        <div className="flex items-center justify-between px-[0.6%] sm:px-[0.6%] py-[0.6vh] sm:py-[0.6vh]">
           {/* Logo */}
           <div className="flex items-center flex-shrink-0">
             <img 
@@ -561,7 +561,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
         {/* Statistics Cards - Compact responsive grid */}
         <div className="flex-shrink-0 grid gap-[0.6%] sm:gap-[0.6%] md:gap-[0.6%] 
                           grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4
-                          px-[1%] sm:px-[1.2%] md:px-[1.5%] pt-[2vh] sm:pt-[2.5vh] md:pt-[3vh] pb-[0.6vh] sm:pb-[0.6vh] md:pb-[0.6vh]">
+                          px-[0.6%] sm:px-[0.6%] md:px-[0.6%] pt-[0.6vh] sm:pt-[0.6vh] md:pt-[0.6vh] pb-[0.6vh] sm:pb-[0.6vh] md:pb-[0.6vh]">
         {statisticsData.map((item) => (
           <StatisticsCard
             key={item.title}
@@ -582,7 +582,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
       </div>
       
         {/* Charts Grid - Takes remaining space */}
-        <div className="flex-1 overflow-hidden px-[1%] sm:px-[1.2%] md:px-[1.5%] pb-[1vh] sm:pb-[1vh] md:pb-[1vh]">
+        <div className="flex-1 overflow-hidden px-[0.6%] sm:px-[0.6%] md:px-[0.6%] pb-[0.6vh] sm:pb-[0.6vh] md:pb-[0.6vh]">
           <div className="grid gap-[0.6%] sm:gap-[0.6%] md:gap-[0.6%] 
                           grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 
                           grid-rows-2 h-full">
@@ -598,36 +598,36 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
             }`}>
                 {item.type === 'table' ? (
                   <Card className="shadow-lg shadow-gray-500/40 border-0 bg-white h-full flex flex-col drop-shadow-lg">
-                    <CardHeader variant="gradient" color="white" floated={false} shadow={false} className="p-[2%] sm:p-[2.2%] md:p-[2.5%]">
+                    <CardHeader variant="gradient" color="white" floated={false} shadow={false} className="p-[0.6%] sm:p-[0.6%] md:p-[0.6%]">
                       <Typography variant="h6" color="blue-gray" className="text-[calc(0.8rem+0.3vw)] sm:text-[calc(0.9rem+0.4vw)]">
                         {item.title}
                       </Typography>
                     </CardHeader>
-                    <CardBody className="px-[2%] sm:px-[2.2%] md:px-[2.5%] pt-0 pb-[2%] sm:pb-[2.2%] md:pb-[2.5%] overflow-auto flex-1" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}} 
+                    <CardBody className="px-[0.6%] sm:px-[0.6%] md:px-[0.6%] pt-0 pb-[0.6vh] sm:pb-[0.6vh] md:pb-[0.6vh] overflow-auto flex-1" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}} 
                               onScroll={(e) => e.target.style.setProperty('-webkit-scrollbar', 'none')}>
                       <div className="overflow-x-auto" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
                         <table className="w-full text-left table-auto">
                           <thead>
                             <tr className="bg-gray-50/50">
-                              <th className="p-[1%] sm:p-[1.2%] md:p-[1.5%] text-[calc(0.6rem+0.2vw)] font-medium text-blue-gray-600">Ort</th>
-                              <th className="p-[1%] sm:p-[1.2%] md:p-[1.5%] text-[calc(0.6rem+0.2vw)] font-medium text-blue-gray-600">Skannade Dokument</th>
-                              <th className="p-[1%] sm:p-[1.2%] md:p-[1.5%] text-[calc(0.6rem+0.2vw)] font-medium text-blue-gray-600">Sidor</th>
-                              <th className="p-[1%] sm:p-[1.2%] md:p-[1.5%] text-[calc(0.6rem+0.2vw)] font-medium text-blue-gray-600">Status</th>
+                              <th className="p-[0.3%] sm:p-[0.3%] md:p-[0.3%] text-[calc(0.6rem+0.2vw)] font-medium text-blue-gray-600">Ort</th>
+                              <th className="p-[0.3%] sm:p-[0.3%] md:p-[0.3%] text-[calc(0.6rem+0.2vw)] font-medium text-blue-gray-600">Skannade Dokument</th>
+                              <th className="p-[0.3%] sm:p-[0.3%] md:p-[0.3%] text-[calc(0.6rem+0.2vw)] font-medium text-blue-gray-600">Sidor</th>
+                              <th className="p-[0.3%] sm:p-[0.3%] md:p-[0.3%] text-[calc(0.6rem+0.2vw)] font-medium text-blue-gray-600">Status</th>
                             </tr>
                           </thead>
                           <tbody>
                             {item.data.map((customer, i) => (
                               <tr key={i} className="hover:bg-gray-50/30 transition-colors">
-                                <td className="p-[1%] sm:p-[1.2%] md:p-[1.5%] text-[calc(0.6rem+0.2vw)] text-blue-gray-900 font-medium">{customer.ort}</td>
-                                <td className="p-[1%] sm:p-[1.2%] md:p-[1.5%] text-[calc(0.6rem+0.2vw)] text-blue-gray-600">{(() => {
+                                <td className="p-[0.3%] sm:p-[0.3%] md:p-[0.3%] text-[calc(0.6rem+0.2vw)] text-blue-gray-900 font-medium">{customer.ort}</td>
+                                <td className="p-[0.3%] sm:p-[0.3%] md:p-[0.3%] text-[calc(0.6rem+0.2vw)] text-blue-gray-600">{(() => {
                                   const numValue = typeof customer.skannadeDokument === 'string' ? parseFloat(customer.skannadeDokument.replace(/[^0-9.-]/g, '')) : customer.skannadeDokument;
                                   return !isNaN(numValue) && isFinite(numValue) ? Math.round(numValue).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : customer.skannadeDokument;
                                 })()}</td>
-                                <td className="p-[1%] sm:p-[1.2%] md:p-[1.5%] text-[calc(0.6rem+0.2vw)] text-blue-gray-600">{(() => {
+                                <td className="p-[0.3%] sm:p-[0.3%] md:p-[0.3%] text-[calc(0.6rem+0.2vw)] text-blue-gray-600">{(() => {
                                   const numValue = typeof customer.totalSidor === 'string' ? parseFloat(customer.totalSidor.replace(/[^0-9.-]/g, '')) : customer.totalSidor;
                                   return !isNaN(numValue) && isFinite(numValue) ? Math.round(numValue).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : customer.totalSidor;
                                 })()}</td>
-                                <td className="p-[1%] sm:p-[1.2%] md:p-[1.5%] text-[calc(0.6rem+0.2vw)]">
+                                <td className="p-[0.3%] sm:p-[0.3%] md:p-[0.3%] text-[calc(0.6rem+0.2vw)]">
                                   <span className={`px-[0.5%] py-[0.2%] rounded-full text-[calc(0.6rem+0.1vw)] ${
                                     customer.status === 'Mycket Aktiv' 
                                       ? 'bg-green-200 text-green-900' 
