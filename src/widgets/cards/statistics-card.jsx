@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 export function StatisticsCard({ color, icon, title, value, footer }) {
   return (
     <Card className="shadow-lg shadow-gray-500/40 border-0 bg-white drop-shadow-lg">
-      <CardBody className="p-[1.25rem] sm:p-[1.5rem] md:p-[1.75rem] text-left flex items-start gap-5">
+      <CardBody className="p-[1.5rem] sm:p-[1.75rem] md:p-[2rem] text-left flex items-start gap-6">
         <div className="flex-shrink-0">
           {icon}
         </div>
@@ -29,7 +29,7 @@ export function StatisticsCard({ color, icon, title, value, footer }) {
         </div>
       </CardBody>
       {footer && (
-        <CardFooter className="p-[1.25rem] sm:p-[1.5rem] md:p-[1.75rem] bg-gray-50/30">
+        <CardFooter className="p-[1.5rem] sm:p-[1.75rem] md:p-[2rem] bg-gray-50/30">
           {footer}
         </CardFooter>
       )}
