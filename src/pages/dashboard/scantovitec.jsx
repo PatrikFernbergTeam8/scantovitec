@@ -163,43 +163,54 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
           {
             color: "white",
             title: "Kundaktivitet",
-            description: "Aktiva/Inaktiva kunder",
+            description: "Aktivitetsnivåer per kund",
             chart: {
               ...customerActivity,
               options: {
                 chart: { type: "donut" },
-                labels: ["Aktiva Kunder", "Inaktiva Kunder"],
-                colors: ["#388e3c", "#e0e0e0"],
-                legend: { show: false },
+                labels: ["Mycket Aktiva", "Aktiva", "Mindre Aktiva", "Inaktiva"],
+                colors: ["#4ade80", "#86efac", "#fed7aa", "#fecaca"],
+                legend: { 
+                  show: true,
+                  position: "bottom",
+                  fontSize: "12px",
+                  markers: {
+                    width: 8,
+                    height: 8
+                  }
+                },
                 plotOptions: {
                   pie: {
                     donut: {
-                      size: "70%",
+                      size: "60%",
                       labels: {
                         show: true,
                         total: {
                           show: true,
-                          label: customerActivity.label,
-                          formatter: () => customerActivity.percentage
+                          label: "Total",
+                          fontSize: "14px",
+                          formatter: () => "100%"
                         }
                       }
                     }
                   }
                 },
                 dataLabels: { 
-                  enabled: false
+                  enabled: true,
+                  formatter: function(val) {
+                    return Math.round(val) + "%"
+                  },
+                  style: {
+                    fontSize: "10px",
+                    fontWeight: "bold"
+                  }
                 },
                 stroke: { width: 2, colors: ["#fff"] },
-                fill: {
-                  type: "gradient",
-                  gradient: {
-                    shade: "light",
-                    type: "horizontal",
-                    shadeIntensity: 0.25,
-                    gradientToColors: ["#66bb6a", "#f5f5f5"],
-                    inverseColors: false,
-                    opacityFrom: 1,
-                    opacityTo: 1,
+                tooltip: {
+                  y: {
+                    formatter: function(val) {
+                      return Math.round(val) + "%"
+                    }
                   }
                 }
               }
