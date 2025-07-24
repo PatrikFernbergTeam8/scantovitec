@@ -334,7 +334,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
     <div className="h-screen w-full overflow-hidden flex flex-col bg-gradient-to-br from-blue-50/70 to-white">
       {/* Header with Logo and Filters */}
       <div className="flex-shrink-0">
-        <div className="flex items-center justify-between px-[0.6%] sm:px-[0.6%] py-[0.6vh] sm:py-[0.6vh]">
+        <div className="flex items-center justify-between px-[0.6%] sm:px-[0.6%] py-[0.6%] sm:py-[0.6%]">
           {/* Logo */}
           <div className="flex items-center flex-shrink-0">
             <img 
@@ -561,7 +561,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
         {/* Statistics Cards - Compact responsive grid */}
         <div className="flex-shrink-0 grid gap-[0.6%] sm:gap-[0.6%] md:gap-[0.6%] 
                           grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4
-                          px-[0.6%] sm:px-[0.6%] md:px-[0.6%] pt-[0.6vh] sm:pt-[0.6vh] md:pt-[0.6vh] pb-[0.6vh] sm:pb-[0.6vh] md:pb-[0.6vh]">
+                          px-[0.6%] sm:px-[0.6%] md:px-[0.6%] pt-[0.6%] sm:pt-[0.6%] md:pt-[0.6%] pb-[0.6%] sm:pb-[0.6%] md:pb-[0.6%]">
         {statisticsData.map((item) => (
           <StatisticsCard
             key={item.title}
@@ -582,7 +582,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
       </div>
       
         {/* Charts Grid - Takes remaining space */}
-        <div className="flex-1 overflow-hidden px-[0.6%] sm:px-[0.6%] md:px-[0.6%] pb-[0.6vh] sm:pb-[0.6vh] md:pb-[0.6vh]">
+        <div className="flex-1 overflow-hidden px-[0.6%] sm:px-[0.6%] md:px-[0.6%] pb-[0.6%] sm:pb-[0.6%] md:pb-[0.6%]">
           <div className="grid gap-[0.6%] sm:gap-[0.6%] md:gap-[0.6%] 
                           grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 
                           grid-rows-2 h-full">
@@ -603,7 +603,7 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
                         {item.title}
                       </Typography>
                     </CardHeader>
-                    <CardBody className="px-[0.6%] sm:px-[0.6%] md:px-[0.6%] pt-0 pb-[0.6vh] sm:pb-[0.6vh] md:pb-[0.6vh] overflow-auto flex-1" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}} 
+                    <CardBody className="px-[0.6%] sm:px-[0.6%] md:px-[0.6%] pt-0 pb-[0.6%] sm:pb-[0.6%] md:pb-[0.6%] overflow-auto flex-1" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}} 
                               onScroll={(e) => e.target.style.setProperty('-webkit-scrollbar', 'none')}>
                       <div className="overflow-x-auto" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
                         <table className="w-full text-left table-auto">
