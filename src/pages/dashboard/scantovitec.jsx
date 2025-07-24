@@ -306,13 +306,13 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
     <div className="h-screen w-full overflow-hidden flex flex-col bg-gradient-to-br from-blue-50/70 to-white">
       {/* Header with Logo and Filters */}
       <div className="flex-shrink-0">
-        <div className="flex items-center justify-between px-[0.5rem] sm:px-[1rem] py-[0.5rem] sm:py-[0.75rem]">
+        <div className="flex items-center justify-between px-[0.75rem] sm:px-[1.5rem] py-[1rem] sm:py-[1.25rem]">
           {/* Logo */}
           <div className="flex items-center flex-shrink-0">
             <img 
               src="/img/LF_Logo.png" 
               alt="Logo" 
-              className="h-[3.5rem] sm:h-[4rem] lg:h-[4.5rem] w-auto object-contain"
+              className="h-[4.5rem] sm:h-[5rem] lg:h-[5.5rem] w-auto object-contain"
             />
           </div>
 
@@ -531,9 +531,9 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
       {/* Main Content Area */}
       <div className="flex-1 overflow-hidden flex flex-col">
         {/* Statistics Cards - Compact responsive grid */}
-        <div className="flex-shrink-0 grid gap-[0.25rem] sm:gap-[0.5rem] md:gap-[0.75rem] 
+        <div className="flex-shrink-0 grid gap-[0.5rem] sm:gap-[0.75rem] md:gap-[1rem] 
                           grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4
-                          px-[0.5rem] sm:px-[0.75rem] md:px-[1rem] pt-[0.25rem] sm:pt-[0.375rem] md:pt-[0.5rem] pb-[0.25rem] sm:pb-[0.5rem] md:pb-[0.75rem]">
+                          px-[0.75rem] sm:px-[1rem] md:px-[1.5rem] pt-[0.75rem] sm:pt-[1rem] md:pt-[1.25rem] pb-[0.75rem] sm:pb-[1rem] md:pb-[1.25rem]">
         {statisticsData.map((item) => (
           <StatisticsCard
             key={item.title}
