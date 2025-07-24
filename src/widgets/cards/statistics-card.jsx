@@ -18,7 +18,7 @@ export function StatisticsCard({ color, icon, title, value, footer }) {
           <Typography variant="small" className="font-normal text-blue-gray-600">
             {title}
           </Typography>
-          <Typography variant="h4" color="blue-gray" className="text-[calc(1rem+0.5vw)] sm:text-[calc(1.2rem+0.6vw)] md:text-[calc(1.4rem+0.7vw)]">
+          <Typography variant="h4" color="blue-gray" className="text-[calc(0.9rem+0.3vw)] sm:text-[calc(1rem+0.4vw)] md:text-[calc(1.1rem+0.5vw)]">
             {(() => {
               const numValue = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.-]/g, '')) : value;
               return !isNaN(numValue) && isFinite(numValue) ? 
