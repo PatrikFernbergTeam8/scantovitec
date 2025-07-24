@@ -591,8 +591,14 @@ export function Scantovitec({ filters, onFilterChange, onResetFilters }) {
                             {item.data.map((customer, i) => (
                               <tr key={i} className="hover:bg-gray-50/30 transition-colors">
                                 <td className="p-[0.25rem] sm:p-[0.375rem] md:p-[0.5rem] text-xs text-blue-gray-900 font-medium">{customer.ort}</td>
-                                <td className="p-[0.25rem] sm:p-[0.375rem] md:p-[0.5rem] text-xs text-blue-gray-600">{typeof customer.skannadeDokument === 'number' ? customer.skannadeDokument.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : customer.skannadeDokument}</td>
-                                <td className="p-[0.25rem] sm:p-[0.375rem] md:p-[0.5rem] text-xs text-blue-gray-600">{typeof customer.totalSidor === 'number' ? customer.totalSidor.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : customer.totalSidor}</td>
+                                <td className="p-[0.25rem] sm:p-[0.375rem] md:p-[0.5rem] text-xs text-blue-gray-600">{(() => {
+                                  const numValue = typeof customer.skannadeDokument === 'string' ? parseFloat(customer.skannadeDokument.replace(/[^0-9.-]/g, '')) : customer.skannadeDokument;
+                                  return !isNaN(numValue) && isFinite(numValue) ? Math.round(numValue).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : customer.skannadeDokument;
+                                })()}</td>
+                                <td className="p-[0.25rem] sm:p-[0.375rem] md:p-[0.5rem] text-xs text-blue-gray-600">{(() => {
+                                  const numValue = typeof customer.totalSidor === 'string' ? parseFloat(customer.totalSidor.replace(/[^0-9.-]/g, '')) : customer.totalSidor;
+                                  return !isNaN(numValue) && isFinite(numValue) ? Math.round(numValue).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : customer.totalSidor;
+                                })()}</td>
                                 <td className="p-[0.25rem] sm:p-[0.375rem] md:p-[0.5rem] text-xs">
                                   <span className={`px-2 py-1 rounded-full text-xs ${
                                     customer.status === 'Mycket Aktiv' 

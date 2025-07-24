@@ -19,7 +19,12 @@ export function StatisticsCard({ color, icon, title, value, footer }) {
             {title}
           </Typography>
           <Typography variant="h4" color="blue-gray" className="sm:text-xl md:text-2xl">
-            {typeof value === 'number' ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : value}
+            {(() => {
+              const numValue = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.-]/g, '')) : value;
+              return !isNaN(numValue) && isFinite(numValue) ? 
+                Math.round(numValue).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : 
+                value;
+            })()}
           </Typography>
         </div>
       </CardBody>
